@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lean.Touch;
-using UnityEditor;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Piece : PuzzleItem
@@ -8,21 +8,94 @@ public class Piece : PuzzleItem
     [SerializeField] protected LeanDragTranslate leanDragTranslate;
     [SerializeField] protected LeanSelectableByFinger leanSelectableByFinger;
     [SerializeField] protected Rigidbody2D rigid;
+    [SerializeField] private List<Node> _nodes = new();
+
+    private Node _firstNode;
     private int _nodeCount;
-    private List<Node> _nodes = new();
-    
+    private bool _isPlaced;
+    private const float SnapDistance = 1f;
 
     public void Init(Transform parent, Color groupColor)
     {
         transform.parent = parent;
         gameObject.name = $"Piece_{groupColor.r}.{groupColor.g}.{groupColor.b}";
+        leanSelectableByFinger.OnSelectedFingerUp.AddListener(OnFingerUp);
+        leanSelectableByFinger.OnSelectedFinger.AddListener(OnFingerDown);
+    }
+
+    private void OnFingerUp(LeanFinger leanFinger)
+    {
+        TryShifting();
+    }
+
+    private void OnFingerDown(LeanFinger leanFinger)
+    {
+        UnRegisterNodes();
+    }
+
+    private void UnRegisterNodes()
+    {
+        if (_isPlaced)
+        {
+            foreach (var node in _nodes)
+            {
+                node.UnRegisterMatrixNode();
+            }
+        }
+
+        _isPlaced = false;
+    }
+
+
+    private void TryShifting()
+    {
+        GridTable table = PuzzleGenerator.Instance.GridTable;
+        var nodePos = _firstNode.transform.position;
+        var pair = table.GetClosestEmptyMatrixNode(nodePos);
+
+        if (!pair.Item1)
+        {
+            Debug.Log("Not Found!!");
+            return;
+        }
+
+        if (Vector3.Distance(nodePos, pair.Item2.transform.position) > SnapDistance)
+        {
+            return;
+        }
+
+        var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
+        if (!t.Item1)
+        {
+            Debug.Log("Cant Assign");
+            return;
+        }
+
+        _isPlaced = true;
+        Shift(t.Item2);
     }
 
     public void AddNode(Node node)
     {
         _nodes.Add(node);
+        if (_nodeCount == 0)
+        {
+            _firstNode = node;
+        }
+
         _nodeCount++;
     }
+
+    public void RecalculateCoordinates()
+    {
+        var position = _firstNode.transform.position;
+        Vector2Int offset = new Vector2Int((int)position.x, (int)position.y);
+        foreach (Node node in _nodes)
+        {
+            node.RemoveOffset(offset);
+        }
+    }
+
 
     public void SetNodesColor(Color newColor)
     {
@@ -32,22 +105,15 @@ public class Piece : PuzzleItem
         }
     }
 
-    public bool CanNodesPlace()
-    {
-        foreach (var node in _nodes)
-        {
-            if (!node.CanPlace())
-            {
-                return false;
-            }   
-        }
-        return true;
-    }
+
     public void Shift(Vector3 value)
     {
         transform.position += value;
+        Debug.Log("Shift " + value);
+
         // bu parça node un kayması gereken yere gitmesi için bu fonksiyonu çağırması lazım
     }
+
 
     public bool HasSingleNode()
     {
@@ -60,6 +126,7 @@ public class Piece : PuzzleItem
         {
             node.RemoveFromNode();
         }
+
         Destroy(gameObject);
     }
 }

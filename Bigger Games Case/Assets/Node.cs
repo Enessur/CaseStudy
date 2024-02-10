@@ -6,19 +6,33 @@ public class Node : PuzzleItem
 {
     [SerializeField] private Renderer renderer;
     public Color Color => _color;
-    public Piece Piece => _piece;
-    public bool HasPiece => _hasPiece;
     private Color _color;
+    public Piece Piece => _piece;
     private Piece _piece;
-    private bool _hasPiece;
-    private MatrixNode _matrixNode;
-    private List<MatrixNode> _matrixNodes = new();
+    public bool HasPiece => _hasPiece;
+    private bool _hasPiece; 
+    public Vector2Int Coordinate =>_coordinate;
+    [SerializeField]private Vector2Int _coordinate;
+
+    [SerializeField]private MatrixNode _matrixNode;
     private bool _hasMatrixNode;
 
     public void Init()
     {
     }
 
+    private void AssignName()
+    {
+        gameObject.name = $"Node_{_coordinate}";
+    }
+
+    public void RemoveOffset(Vector2Int offset)
+    {
+        var position = transform.position;
+        Vector2Int coordinate = new Vector2Int((int)position.x, (int)position.y);
+        _coordinate = coordinate - offset;
+        AssignName();
+    }
 
     public void RegisterMatrixNode(MatrixNode matrixNode)
     {
@@ -29,6 +43,7 @@ public class Node : PuzzleItem
 
     public void UnRegisterMatrixNode()
     {
+        _matrixNode.UnsetNode();
         _matrixNode = null;
         _hasMatrixNode = false;
     }
@@ -55,18 +70,5 @@ public class Node : PuzzleItem
     }
 
 
-    public bool CanPlace()
-    {
-        if (!_matrixNodes.Any())
-        {
-            return false;
-        }
-
-        foreach (var matrixNode in _matrixNodes)
-        {
-            return false;
-        }
-
-        return true;
-    }
+    
 }

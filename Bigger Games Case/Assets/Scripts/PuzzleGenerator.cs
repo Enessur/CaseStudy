@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class PuzzleGenerator : MonoBehaviour
+public class PuzzleGenerator : MonoBehaviour,IResetable
 {
     [SerializeField] private Piece piecePrefab;
     [SerializeField] private Node nodePrefab;
+    public GridTable GridTable =>gridTable;
     [SerializeField] private GridTable gridTable;
     [SerializeField] private Vector2Int  puzzleSize = new(4,4);
     [SerializeField] private Vector2 noise = new Vector2(0.5f,0.8f);
@@ -16,13 +18,29 @@ public class PuzzleGenerator : MonoBehaviour
     private Node[,] _nodeGrid = new Node[24, 24];
     private static readonly Vector2 ShuffleMax = new(-5, -8);
     private static readonly Vector2 ShuffleMin = new(-2, 3);
+    public static PuzzleGenerator Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
         GenerateGridTable();
         GeneratePuzzle();
+       
+    }
+    public void OnEnable()
+    {
+        ((IResetable)this).Subscription();
+    }
+    public void OnDisable()
+    {
+        ((IResetable)this).Unsubscription();
     }
 
+    
     private void GenerateGridTable()
     {
         gridTable.GenerateGrid(puzzleSize);
@@ -69,7 +87,13 @@ public class PuzzleGenerator : MonoBehaviour
 
         RemoveParentFromSingleElements();
         RegroupSinglePieceBlocks();
+        foreach (var piece in _pieces)
+        {
+            piece.RecalculateCoordinates();
+        }
         Shuffle();
+        
+        
     }
 
     private void CreateGroup(int startX, int startY)
@@ -197,5 +221,10 @@ public class PuzzleGenerator : MonoBehaviour
     private int CalculateColorIndex(float noiseValue)
     {
         return Mathf.FloorToInt(noiseValue * puzzleSize.x);
+    }
+
+    void IResetable.Reset()
+    {
+       
     }
 }

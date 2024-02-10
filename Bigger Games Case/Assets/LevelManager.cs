@@ -4,60 +4,29 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private PuzzleGenerator puzzleGenerator;
-    private List<Piece> _pieces = new();
-    private int _puzzleSize;
-    private int _piecesPlaced = 0;
-    private bool _isCheckOn;
-    private void Start()
+
+    public static Action onLevelReset;
+    private void OnEnable()
     {
-        _isCheckOn = true;
-       // _puzzleSize = puzzleGenerator.puzzleSize;
+        GridTable.onAllNodesOccupied += OnAllNodesOccupied;       
+    }
+    private void OnDisable()
+    {
+        GridTable.onAllNodesOccupied -= OnAllNodesOccupied;
+    }
+   
+    private void OnAllNodesOccupied()
+    {
+        ResetLevelWithAnimation();
     }
 
-
-    private void CorrectPieceCount()
+    private void ResetLevelWithAnimation()
     {
-        _piecesPlaced++;
-        Debug.Log(_piecesPlaced);
-        if (_piecesPlaced == _puzzleSize * _puzzleSize)
-        {
-            Debug.Log("Win!");
-            
-            ResetPuzzle();
-           
-        }
+        ResetLevel();
     }
 
-    
-    private void RemovePiece()
+    private void ResetLevel()
     {
-        _piecesPlaced--;
-    }
-
-
-    private void ResetPuzzle()
-    {
-        
-        foreach (Piece piece in _pieces)
-        {
-            if (piece.transform.childCount > 0)
-            {
-                
-                for (int i = 0; i <piece.transform.childCount; i++)
-                {
-                    Destroy(piece.transform.GetChild(i).gameObject);
-                }
-            }
-        }
-        
-        foreach (Transform child in puzzleGenerator.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-       // _pieces.RemoveAll(x => x == null);
-        puzzleGenerator.GeneratePuzzle();
-        _piecesPlaced = 0;
+        onLevelReset?.Invoke();
     }
 }

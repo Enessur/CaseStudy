@@ -293,9 +293,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   piecePrefab: {fileID: 4138097461598832170, guid: 3b2df6b321e70284095f0468e3caaadb, type: 3}
   nodePrefab: {fileID: 7003801721397942303, guid: 37dfbe29fa563dc4db995acb14b113da, type: 3}
-  puzzleSize: 5
-  noiseMin: 0.6
-  noiseMax: 0.8
+  gridTable: {fileID: 1411193607}
+  puzzleSize: {x: 5, y: 5}
+  noise: {x: 0.5, y: 0.8}
 --- !u!4 &1220653225
 Transform:
   m_ObjectHideFlags: 0
@@ -401,7 +401,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 393663df55adb9e4487b7ab2dbf9bcbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  puzzleGenerator: {fileID: 1220653224}
 --- !u!4 &1306557737
 Transform:
   m_ObjectHideFlags: 0
@@ -485,52 +484,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1411193605
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1411193606}
-  - component: {fileID: 1411193607}
-  m_Layer: 0
-  m_Name: GridGenerator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1411193606
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1411193605}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.87, y: -4.53, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1411193607
+--- !u!114 &1411193607 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 7630002782429428808, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+  m_PrefabInstance: {fileID: 7630002781691029327}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1411193605}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c16d7348c7a4fdf4e862f1890785748a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridCube: {fileID: 6365761344223510153, guid: 7947f5d1aa7376e4bb396d3af9824567, type: 3}
-  puzzleGenerator: {fileID: 1220653224}
 --- !u!1 &1621179599
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,3 +863,60 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b2df6b321e70284095f0468e3caaadb, type: 3}
+--- !u!1001 &7630002781691029327
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7630002782429428810, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
+      propertyPath: m_Name
+      value: GridTable
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
