@@ -4,7 +4,6 @@ using UnityEngine;
 public class MatrixNode : MonoBehaviour, IResetable
 {
     [SerializeField] private MatrixNodeData data;
-    public Action onNodeOccupied;
 
     public void OnEnable()
     {
@@ -26,7 +25,6 @@ public class MatrixNode : MonoBehaviour, IResetable
     public void SetNode(Node node)
     {
         data = new MatrixNodeData(data.coordinate, true, node);
-        onNodeOccupied?.Invoke();
     }
 
     public void UnsetNode()

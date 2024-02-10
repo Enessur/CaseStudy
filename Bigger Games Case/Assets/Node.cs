@@ -38,7 +38,7 @@ public class Node : PuzzleItem
     {
         _matrixNode = matrixNode;
         _hasMatrixNode = true;
-        //her bir node haangi matrix node a karşılık geldiğini tutması lazım 
+        matrixNode.SetNode(this);
     }
 
     public void UnRegisterMatrixNode()

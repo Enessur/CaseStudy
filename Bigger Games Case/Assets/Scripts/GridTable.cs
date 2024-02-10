@@ -32,7 +32,6 @@ public class GridTable : MonoBehaviour, IResetable
             {
                 var mn = Instantiate(matrixNodePrefab, gridHolder.transform, true);
                 mn.Init(new MatrixNodeData(new Vector2Int(i, j), false, null));
-                mn.onNodeOccupied += OnNodeOccupied;
                 _matrixNodeDictionary.Add(new Vector2Int(i,j),mn);
             }
         }
@@ -40,11 +39,7 @@ public class GridTable : MonoBehaviour, IResetable
         _targetCount = size.x * size.y;
     }
 
-    private void OnNodeOccupied()
-    {
-        _occupiedNodeCount++;
-        CheckComplete();
-    }
+    
 
 
     public (bool, MatrixNode) GetClosestEmptyMatrixNode(Vector3 position)
@@ -117,7 +112,7 @@ public class GridTable : MonoBehaviour, IResetable
             }
             availableNodes.Add(mn);
         }
-
+        
         int i = 0;
         foreach (var node in nodes)
         {
