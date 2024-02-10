@@ -6,9 +6,10 @@ public class PuzzleGenerator : MonoBehaviour
 {
     [SerializeField] private Piece piecePrefab;
     [SerializeField] private Node nodePrefab;
-    public int puzzleSize = 4;
-    public float noiseMin = 0.5f, noiseMax = 0.8f;
-
+    [SerializeField] private GridTable gridTable;
+    [SerializeField] private Vector2Int  puzzleSize = new(4,4);
+    [SerializeField] private Vector2 noise = new Vector2(0.5f,0.8f);
+    
     private List<Piece> _pieces = new();
     private Color[] _pieceColors;
     private float _noiseScale;
@@ -18,24 +19,30 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void Start()
     {
+        GenerateGridTable();
         GeneratePuzzle();
+    }
+
+    private void GenerateGridTable()
+    {
+        gridTable.GenerateGrid(puzzleSize);
     }
 
     public void GeneratePuzzle()
     {
-        _pieceColors = GenerateRandomColors();
+        
+        _pieceColors = GenerateRandomColors((puzzleSize.x +puzzleSize.y)/2);
 
-        _noiseScale = Random.Range(noiseMin, noiseMax);
+        _noiseScale = Random.Range(noise.x, noise.y);
         Debug.Log(_noiseScale);
-        for (int i = 0; i < puzzleSize; i++)
+        for (int i = 0; i < puzzleSize.x; i++)
         {
-            for (int j = 0; j < puzzleSize; j++)
+            for (int j = 0; j < puzzleSize.y; j++)
             {
-                float noiseValue = Mathf.PerlinNoise((i * _noiseScale) + Random.Range(noiseMin, noiseMax),
-                    (j * _noiseScale) + Random.Range(-noiseMin, noiseMax));
+                float noiseValue = Mathf.PerlinNoise((i * _noiseScale) + Random.Range(noise.x, noise.y),
+                    (j * _noiseScale) + Random.Range(-noise.x, noise.y));
               
                 Color pieceColor = _pieceColors[CalculateColorIndex(noiseValue)];
-                
                 var node = Instantiate(nodePrefab, new Vector3(i, j, 0), Quaternion.identity);
                 node.Init();
                 node.SetColor(pieceColor);
@@ -48,9 +55,9 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void GroupPuzzle()
     {
-        for (int i = 0; i < puzzleSize; i++)
+        for (int i = 0; i < puzzleSize.x; i++)
         {
-            for (int j = 0; j < puzzleSize; j++)
+            for (int j = 0; j < puzzleSize.y; j++)
             {
                 if (!_nodeGrid[i, j].HasPiece)
                 {
@@ -83,7 +90,7 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void DFS(int x, int y, Color groupColor, Piece piece)
     {
-        if (x < 0 || x >= puzzleSize || y < 0 || y >= puzzleSize)
+        if (x < 0 || x >= puzzleSize.x || y < 0 || y >= puzzleSize.y)
         {
             return;
         }
@@ -118,9 +125,9 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void RegroupSinglePieceBlocks()
     {
-        for (int i = 0; i < puzzleSize; i++)
+        for (int i = 0; i < puzzleSize.x; i++)
         {
-            for (int j = 0; j < puzzleSize; j++)
+            for (int j = 0; j < puzzleSize.y; j++)
             {
                 if (!_nodeGrid[i, j].HasPiece)
                 {
@@ -140,7 +147,7 @@ public class PuzzleGenerator : MonoBehaviour
 
     private void SingleGroupDFS(int x, int y, Piece piece)
     {
-        if (x < 0 || x >= puzzleSize || y < 0 || y >= puzzleSize)
+        if (x < 0 || x >= puzzleSize.x || y < 0 || y >= puzzleSize.y)
         {
             return;
         }
@@ -177,10 +184,10 @@ public class PuzzleGenerator : MonoBehaviour
         }
     }
 
-    private Color[] GenerateRandomColors()
+    private Color[] GenerateRandomColors(int n)
     {
-        Color[] colors = new Color[puzzleSize];
-        for (int i = 0; i < puzzleSize; i++)
+        Color[] colors = new Color[n];
+        for (int i = 0; i < n; i++)
         {
             colors[i] = new Color(Random.value, Random.value, Random.value);
         }
@@ -189,6 +196,6 @@ public class PuzzleGenerator : MonoBehaviour
 
     private int CalculateColorIndex(float noiseValue)
     {
-        return Mathf.FloorToInt(noiseValue * puzzleSize);
+        return Mathf.FloorToInt(noiseValue * puzzleSize.x);
     }
 }

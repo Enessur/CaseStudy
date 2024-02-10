@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lean.Touch;
 using UnityEngine;
 
 public class Node : PuzzleItem
@@ -20,8 +19,7 @@ public class Node : PuzzleItem
     {
     }
 
-     
-    
+
     public void RegisterMatrixNode(MatrixNode matrixNode)
     {
         _matrixNode = matrixNode;
@@ -55,7 +53,7 @@ public class Node : PuzzleItem
         _hasPiece = false;
         _piece = null;
     }
-    
+
 
     public bool CanPlace()
     {
@@ -63,10 +61,12 @@ public class Node : PuzzleItem
         {
             return false;
         }
+
         foreach (var matrixNode in _matrixNodes)
         {
             return false;
         }
+
         return true;
     }
 }

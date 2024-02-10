@@ -12,19 +12,7 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         _isCheckOn = true;
-        _puzzleSize = puzzleGenerator.puzzleSize;
-    }
-
-    private void OnEnable()
-    {
-        GridPlane.OnEnterAction += CorrectPieceCount;
-        GridPlane.OnExitAction += RemovePiece;
-    }
-
-    private void OnDisable()
-    {
-        GridPlane.OnEnterAction -= CorrectPieceCount;
-        GridPlane.OnExitAction -= RemovePiece;
+       // _puzzleSize = puzzleGenerator.puzzleSize;
     }
 
 
@@ -50,7 +38,6 @@ public class LevelManager : MonoBehaviour
 
     private void ResetPuzzle()
     {
-        _pieces.RemoveAll(x => x == null);
         
         foreach (Piece piece in _pieces)
         {
@@ -69,6 +56,7 @@ public class LevelManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+       // _pieces.RemoveAll(x => x == null);
         puzzleGenerator.GeneratePuzzle();
         _piecesPlaced = 0;
     }
