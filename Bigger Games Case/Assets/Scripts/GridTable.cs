@@ -14,14 +14,11 @@ public class GridTable : MonoBehaviour, IResetable
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
-       
     }
     
     public void OnDisable()
     {
         ((IResetable)this).Unsubscription();
-      
-
     }
 
     public void GenerateGrid(Vector2Int size)
@@ -41,6 +38,19 @@ public class GridTable : MonoBehaviour, IResetable
         _targetCount = size.x * size.y;
     }
 
+    public void RemoveGrids()
+    {
+        foreach (var matrixNode in _matrixNodeDictionary.Values)
+        {
+            Destroy(matrixNode.gameObject);
+        }
+        _matrixNodeDictionary.Clear();
+        GameObject gridHolder = GameObject.Find("GridHolder");
+        if (gridHolder != null)
+        {
+            Destroy(gridHolder);
+        }
+    }
     
 
 
@@ -82,7 +92,6 @@ public class GridTable : MonoBehaviour, IResetable
             ((IResetable)k.Value).Reset();
         }
 
-        _occupiedNodeCount = 0;
     }
 
     public (bool, Vector3) TryAssignNodes(List<Node> nodes,Node firsNode, MatrixNode matrixNode)

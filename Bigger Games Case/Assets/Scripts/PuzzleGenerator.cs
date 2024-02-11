@@ -58,7 +58,6 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
         if (state)
         {
             _placedPieceCount++;
-            
         }
         else
         {
@@ -260,10 +259,41 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
 
     private int CalculateColorIndex(float noiseValue)
     {
-        return Mathf.FloorToInt(noiseValue * puzzleSize.x);
+        
+        return Mathf.FloorToInt(noiseValue *((puzzleSize.x +puzzleSize.y)/2));
     }
 
+   
+    
+    //todo: custom level size with sliders, use cinemachine to adjust cam
+    private void CreateLevelWithButtons( Vector2Int size)
+    {
+        gridTable.RemoveGrids();
+        puzzleSize = size;
+        GenerateGridTable();
+        ResetPuzzle();
+    }
+    public void OnEasyLevelCreate()
+    {
+        puzzleSize = new(4,4);
+        CreateLevelWithButtons(puzzleSize);
+    }
+    public void OnNormalLevelCreate()
+    {
+        puzzleSize = new(5,5);
+        CreateLevelWithButtons(puzzleSize);
+    }
+    public void OnHardLevelCreate()
+    {
+        puzzleSize = new(6,6);
+        CreateLevelWithButtons(puzzleSize);
+    }
     void IResetable.Reset()
+    {
+       ResetPuzzle();
+    }
+
+    private void ResetPuzzle()
     {
         foreach (var piece in _pieces)
         {
@@ -274,4 +304,5 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
         _pieces.Clear();
         CreatePuzzle();
     }
+    
 }

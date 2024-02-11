@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -12,8 +13,10 @@ public class Node : PuzzleItem
     public bool HasPiece => _hasPiece;
     private bool _hasPiece; 
     public Vector2Int Coordinate =>_coordinate;
+    
+    public static Action onReload;
+    
     [SerializeField]private Vector2Int _coordinate;
-
     [SerializeField]private MatrixNode _matrixNode;
     private bool _hasMatrixNode;
 
@@ -70,5 +73,5 @@ public class Node : PuzzleItem
     }
 
 
-    
+   
 }

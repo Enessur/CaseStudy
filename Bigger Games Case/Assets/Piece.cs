@@ -8,7 +8,6 @@ public class Piece : PuzzleItem
 {
     [SerializeField] protected LeanDragTranslate leanDragTranslate;
     [SerializeField] protected LeanSelectableByFinger leanSelectableByFinger;
-    [SerializeField] protected Rigidbody2D rigid;
     [SerializeField] private List<Node> _nodes = new();
 
     private Node _firstNode;
@@ -117,8 +116,6 @@ public class Piece : PuzzleItem
     {
         transform.position += value;
         Debug.Log("Shift " + value);
-
-        // bu parça node un kayması gereken yere gitmesi için bu fonksiyonu çağırması lazım
     }
 
 
