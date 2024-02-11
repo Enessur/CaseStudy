@@ -1,24 +1,28 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class PuzzleGenerator : MonoBehaviour,IResetable
 {
+    public static PuzzleGenerator Instance;
     [SerializeField] private Piece piecePrefab;
     [SerializeField] private Node nodePrefab;
     public GridTable GridTable =>gridTable;
     [SerializeField] private GridTable gridTable;
     [SerializeField] private Vector2Int  puzzleSize = new(4,4);
     [SerializeField] private Vector2 noise = new Vector2(0.5f,0.8f);
-    
+
+    public static Action OnAllPiecesPlaced;
     private List<Piece> _pieces = new();
     private Color[] _pieceColors;
     private float _noiseScale;
     private Node[,] _nodeGrid = new Node[24, 24];
     private static readonly Vector2 ShuffleMax = new(-5, -8);
     private static readonly Vector2 ShuffleMin = new(-2, 3);
-    public static PuzzleGenerator Instance;
+    private int _totalPieceCount;
+    private int _placedPieceCount;
 
     private void Awake()
     {
@@ -28,19 +32,47 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
     private void Start()
     {
         GenerateGridTable();
-        GeneratePuzzle();
-       
+        CreatePuzzle();
     }
+
+    private void CreatePuzzle()
+    {
+        GeneratePuzzle();
+        _pieces.RemoveAll(x => x == null);
+        _totalPieceCount = _pieces.Count;
+    }
+
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
+        Piece.onPieceStateChanged += OnPieceStateChanged;
     }
     public void OnDisable()
     {
         ((IResetable)this).Unsubscription();
+        Piece.onPieceStateChanged -= OnPieceStateChanged;
     }
 
+    private void OnPieceStateChanged(bool state, Piece piece)
+    {
+        if (state)
+        {
+            _placedPieceCount++;
+            
+        }
+        else
+        {
+            _placedPieceCount--;
+        }
+
+        if (_totalPieceCount == _placedPieceCount)
+        {
+            OnAllPiecesPlaced?.Invoke();
+        }
+    }
     
+    
+
     private void GenerateGridTable()
     {
         gridTable.GenerateGrid(puzzleSize);
@@ -106,6 +138,7 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
     private Piece CreatePiece(Color groupColor)
     {
         var piece = Instantiate(piecePrefab);
+        _totalPieceCount++;
         piece.Init(transform, groupColor);
 
         _pieces.Add(piece);
@@ -137,14 +170,21 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
 
     private void RemoveParentFromSingleElements()
     {
+        List<Piece> destroyablePieces = new List<Piece>();
         foreach (var piece in _pieces)
         {
             if (piece.HasSingleNode())
             {
+                destroyablePieces.Add(piece);
                 piece.RemoveAllNodes();
             }
         }
-        _pieces.RemoveAll(x => x == null);
+
+        foreach (var piece in destroyablePieces)
+        {
+            _pieces.Remove(piece);
+            Destroy(piece.gameObject);
+        }
     }
 
     private void RegroupSinglePieceBlocks()
@@ -225,6 +265,13 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
 
     void IResetable.Reset()
     {
-       
+        foreach (var piece in _pieces)
+        {
+            Destroy(piece.gameObject);
+        }
+        _totalPieceCount = 0;
+        _placedPieceCount = 0;
+        _pieces.Clear();
+        CreatePuzzle();
     }
 }

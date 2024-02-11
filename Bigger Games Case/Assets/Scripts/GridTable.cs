@@ -6,7 +6,6 @@ using UnityEngine;
 public class GridTable : MonoBehaviour, IResetable
 {
     [SerializeField] private MatrixNode matrixNodePrefab;
-    public static Action onAllNodesOccupied;
     private Dictionary<Vector2Int, MatrixNode> _matrixNodeDictionary = new();
     private int _occupiedNodeCount;
     private int _targetCount;
@@ -15,11 +14,14 @@ public class GridTable : MonoBehaviour, IResetable
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
+       
     }
-
+    
     public void OnDisable()
     {
         ((IResetable)this).Unsubscription();
+      
+
     }
 
     public void GenerateGrid(Vector2Int size)
@@ -70,16 +72,7 @@ public class GridTable : MonoBehaviour, IResetable
 
         return (true, closestNode);
     }
-
-    private void CheckComplete()
-    {
-        if (_occupiedNodeCount < _targetCount)
-        {
-            return;
-        }
-
-        onAllNodesOccupied?.Invoke();
-    }
+    
 
 
     void IResetable.Reset()
@@ -112,6 +105,7 @@ public class GridTable : MonoBehaviour, IResetable
             }
             availableNodes.Add(mn);
         }
+        
         
         int i = 0;
         foreach (var node in nodes)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Lean.Touch;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class Piece : PuzzleItem
     private int _nodeCount;
     private bool _isPlaced;
     private const float SnapDistance = 1f;
-
+    public static Action<bool,Piece> onPieceStateChanged;
     public void Init(Transform parent, Color groupColor)
     {
         transform.parent = parent;
@@ -41,8 +42,9 @@ public class Piece : PuzzleItem
             {
                 node.UnRegisterMatrixNode();
             }
+            onPieceStateChanged?.Invoke(false,this);
         }
-
+        
         _isPlaced = false;
     }
 
@@ -71,8 +73,13 @@ public class Piece : PuzzleItem
             return;
         }
 
+        if (!_isPlaced)
+        {
+            onPieceStateChanged?.Invoke(true,this);
+        }
         _isPlaced = true;
         Shift(t.Item2);
+        
     }
 
     public void AddNode(Node node)
@@ -126,7 +133,7 @@ public class Piece : PuzzleItem
         {
             node.RemoveFromNode();
         }
-
+        
         Destroy(gameObject);
     }
 }

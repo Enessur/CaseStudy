@@ -294,7 +294,7 @@ MonoBehaviour:
   piecePrefab: {fileID: 4138097461598832170, guid: 3b2df6b321e70284095f0468e3caaadb, type: 3}
   nodePrefab: {fileID: 7003801721397942303, guid: 37dfbe29fa563dc4db995acb14b113da, type: 3}
   gridTable: {fileID: 1411193607}
-  puzzleSize: {x: 5, y: 5}
+  puzzleSize: {x: 6, y: 6}
   noise: {x: 0.5, y: 0.8}
 --- !u!4 &1220653225
 Transform:

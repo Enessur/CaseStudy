@@ -8,14 +8,14 @@ public class LevelManager : MonoBehaviour
     public static Action onLevelReset;
     private void OnEnable()
     {
-        GridTable.onAllNodesOccupied += OnAllNodesOccupied;       
+        PuzzleGenerator.OnAllPiecesPlaced += OnAllPiecesPlaced;
     }
     private void OnDisable()
     {
-        GridTable.onAllNodesOccupied -= OnAllNodesOccupied;
+        PuzzleGenerator.OnAllPiecesPlaced -= OnAllPiecesPlaced;
     }
    
-    private void OnAllNodesOccupied()
+    private void OnAllPiecesPlaced()
     {
         ResetLevelWithAnimation();
     }
