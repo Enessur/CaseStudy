@@ -11,6 +11,8 @@ public class GridTable : MonoBehaviour, IResetable
     private int _targetCount;
     private Vector2Int _size;
 
+    public static Action onGridCreate;
+
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
@@ -34,8 +36,8 @@ public class GridTable : MonoBehaviour, IResetable
                 _matrixNodeDictionary.Add(new Vector2Int(i,j),mn);
             }
         }
-
         _targetCount = size.x * size.y;
+        onGridCreate?.Invoke();
     }
 
     public void RemoveGrids()

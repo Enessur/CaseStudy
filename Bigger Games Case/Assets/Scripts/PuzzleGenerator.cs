@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class PuzzleGenerator : MonoBehaviour,IResetable
@@ -11,9 +12,9 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
     [SerializeField] private Node nodePrefab;
     public GridTable GridTable =>gridTable;
     [SerializeField] private GridTable gridTable;
-    [SerializeField] private Vector2Int  puzzleSize = new(4,4);
     [SerializeField] private Vector2 noise = new Vector2(0.5f,0.8f);
-
+    
+    public Vector2Int  puzzleSize = new(4,4);
     public static Action OnAllPiecesPlaced;
     private List<Piece> _pieces = new();
     private Color[] _pieceColors;
@@ -262,31 +263,14 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
         
         return Mathf.FloorToInt(noiseValue *((puzzleSize.x +puzzleSize.y)/2));
     }
-
-   
     
     //todo: custom level size with sliders, use cinemachine to adjust cam
-    private void CreateLevelWithButtons( Vector2Int size)
+    public void CreateLevel( Vector2Int size)
     {
         gridTable.RemoveGrids();
         puzzleSize = size;
         GenerateGridTable();
         ResetPuzzle();
-    }
-    public void OnEasyLevelCreate()
-    {
-        puzzleSize = new(4,4);
-        CreateLevelWithButtons(puzzleSize);
-    }
-    public void OnNormalLevelCreate()
-    {
-        puzzleSize = new(5,5);
-        CreateLevelWithButtons(puzzleSize);
-    }
-    public void OnHardLevelCreate()
-    {
-        puzzleSize = new(6,6);
-        CreateLevelWithButtons(puzzleSize);
     }
     void IResetable.Reset()
     {
@@ -304,5 +288,4 @@ public class PuzzleGenerator : MonoBehaviour,IResetable
         _pieces.Clear();
         CreatePuzzle();
     }
-    
 }

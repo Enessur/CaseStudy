@@ -115,7 +115,6 @@ public class Piece : PuzzleItem
     public void Shift(Vector3 value)
     {
         transform.position += value;
-        Debug.Log("Shift " + value);
     }
 
 
