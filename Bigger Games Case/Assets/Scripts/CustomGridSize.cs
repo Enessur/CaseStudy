@@ -27,7 +27,6 @@ public class CustomGridSize : MonoBehaviour
         _gridXValue = LerpThis(_gridSizeMin, _gridSizeMax, sliderXValue.value);
         _gridYValue = LerpThis(_gridSizeMin, _gridSizeMax, sliderYValue.value);
         Debug.Log($"Slider X value: {_gridXValue} Slider Y value:{_gridYValue}");
-        smoothCam.OnGridSizeChange();
     }
     
 

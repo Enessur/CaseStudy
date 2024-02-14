@@ -49,7 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leanDragTranslate: {fileID: 4113988237914002769}
   leanSelectableByFinger: {fileID: 3020174758976507839}
-  rigid: {fileID: 6563889165707602493}
+  _nodes: []
+  orginPoint: {fileID: 326916089734170239, guid: 32f43655a473bc843b9fe19ec7a64f1c, type: 3}
 --- !u!114 &3020174758976507839
 MonoBehaviour:
   m_ObjectHideFlags: 0

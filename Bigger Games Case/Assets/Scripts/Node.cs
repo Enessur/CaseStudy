@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class Node : PuzzleItem
@@ -49,6 +50,15 @@ public class Node : PuzzleItem
         _matrixNode.UnsetNode();
         _matrixNode = null;
         _hasMatrixNode = false;
+    }
+
+    public void SortingLayerUp()
+    {
+        renderer.sortingOrder++;
+    }
+    public void SortingLayerDown()
+    {
+        renderer.sortingOrder--;
     }
 
 

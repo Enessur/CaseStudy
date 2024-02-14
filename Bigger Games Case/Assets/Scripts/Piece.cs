@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lean.Touch;
-using Unity.VisualScripting;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 public class Piece : PuzzleItem
 {
     [SerializeField] protected LeanDragTranslate leanDragTranslate;
     [SerializeField] protected LeanSelectableByFinger leanSelectableByFinger;
     [SerializeField] private List<Node> _nodes = new();
-
+    [SerializeField] private GameObject orginPoint;
+    
     private Node _firstNode;
     private int _nodeCount;
     private bool _isPlaced;
     private const float SnapDistance = 1f;
-    public static Action<bool,Piece> onPieceStateChanged;
+    public static Action<bool, Piece> onPieceStateChanged;
+
     public void Init(Transform parent, Color groupColor)
     {
         transform.parent = parent;
@@ -26,11 +28,13 @@ public class Piece : PuzzleItem
     private void OnFingerUp(LeanFinger leanFinger)
     {
         TryShifting();
+        ChangeLayerOnFingerUp();
     }
 
     private void OnFingerDown(LeanFinger leanFinger)
     {
         UnRegisterNodes();
+        ChangeLayerOnFingerDown();
     }
 
     private void UnRegisterNodes()
@@ -41,12 +45,12 @@ public class Piece : PuzzleItem
             {
                 node.UnRegisterMatrixNode();
             }
-            onPieceStateChanged?.Invoke(false,this);
+
+            onPieceStateChanged?.Invoke(false, this);
         }
-        
+
         _isPlaced = false;
     }
-
 
     private void TryShifting()
     {
@@ -74,11 +78,11 @@ public class Piece : PuzzleItem
 
         if (!_isPlaced)
         {
-            onPieceStateChanged?.Invoke(true,this);
+            onPieceStateChanged?.Invoke(true, this);
         }
+
         _isPlaced = true;
         Shift(t.Item2);
-        
     }
 
     public void AddNode(Node node)
@@ -102,13 +106,47 @@ public class Piece : PuzzleItem
         }
     }
 
-
     public void SetNodesColor(Color newColor)
     {
         foreach (Node node in _nodes)
         {
             node.SetColor(newColor);
         }
+    }
+
+
+    public Vector2Int ReturnPieceSize()
+    {
+        int minX = int.MaxValue;
+        int minY = int.MaxValue;
+        int maxX = int.MinValue;
+        int maxY = int.MinValue;
+
+        foreach (var node in _nodes)
+        {
+            if (node.Coordinate.x < minX)
+            {
+                minX = node.Coordinate.x;
+            }
+            if (node.Coordinate.y < minY)
+            {
+                minY = node.Coordinate.y;
+            }
+            if (node.Coordinate.x > maxX)
+            {
+                maxX = node.Coordinate.x;
+            }
+            if (node.Coordinate.y > maxY)
+            {
+                maxY = node.Coordinate.y;
+            }
+        }
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+
+        Debug.Log($"Piece Size width:{width}, height:{height}");
+        return new Vector2Int(width, height);
     }
 
 
@@ -123,13 +161,48 @@ public class Piece : PuzzleItem
         return _nodeCount == 1;
     }
 
+    private void ChangeLayerOnFingerUp()
+    {
+
+        foreach (var node in _nodes)
+        {
+            node.SortingLayerDown();
+        }
+    }
+
+    private void ChangeLayerOnFingerDown()
+    {
+        transform.position += new Vector3(0, 1.5f, 0); 
+
+        foreach (var node in _nodes)
+        {
+            node.SortingLayerUp();
+        }
+    }
+
     public void RemoveAllNodes()
     {
         foreach (var node in _nodes)
         {
             node.RemoveFromNode();
         }
-        
+
         Destroy(gameObject);
     }
+
+    public void ShiftNodesToOrigin()
+    {
+        Vector3 offset = Vector3.zero;
+        foreach (var node in _nodes)
+        {
+            offset += node.transform.localPosition;
+        }
+
+        offset /= _nodeCount;
+        foreach (var node in _nodes)
+        {
+            node.transform.localPosition -= offset;
+        }
+    }
+    
 }

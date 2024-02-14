@@ -12,8 +12,9 @@ public struct GridCanvasLevelButtonPair
 [Serializable]
 public struct GridCanvasLevelSliderPair
 {
-    public SliderController sliderX;
-    public SliderController sliderY;
+    // public SliderController sliderX;
+    // public SliderController sliderY;
+    public SliderController sliderXY;
 }
 
 public class GridCanvasController : MonoBehaviour
@@ -21,7 +22,8 @@ public class GridCanvasController : MonoBehaviour
     [SerializeField] private GridCanvasLevelButtonPair[] gridCanvasLevelButtonPairs;
     [SerializeField] private GridCanvasLevelSliderPair gridCanvasLevelSliderPair;
     [SerializeField] private Vector2Int currentValue;
-
+    [SerializeField] private SmoothCam smoothCam;
+    
     private void OnEnable()
     {
         foreach (var p in gridCanvasLevelButtonPairs)
@@ -29,21 +31,30 @@ public class GridCanvasController : MonoBehaviour
             void ButtonClicked() => OnEasyLevelCreate(p.levelSize);
             p.levelButton.onClick.AddListener(ButtonClicked);
         }
-
-        gridCanvasLevelSliderPair.sliderX.onSliderValueChangedInt += OnSliderValueChangedInt;
-        gridCanvasLevelSliderPair.sliderY.onSliderValueChangedInt += OnSliderValueChangedInt;
+        gridCanvasLevelSliderPair.sliderXY.onSliderValueChanged += OnSliderValueChanged;
+        
+        // gridCanvasLevelSliderPair.sliderX.onSliderValueChangedInt += OnSliderValueChangedInt;
+        // gridCanvasLevelSliderPair.sliderY.onSliderValueChangedInt += OnSliderValueChangedInt;
     }
 
-    private void OnSliderValueChangedInt(int value, bool isX)
+    // private void OnSliderValueChangedInt(int value, bool isX)
+    // {
+    //     if (isX)
+    //     {
+    //         currentValue = new Vector2Int(value, currentValue.y);
+    //     }
+    //     else
+    //     {
+    //         currentValue = new Vector2Int(currentValue.x, value);
+    //     }
+    //     OnCustomLevelCreate(currentValue);
+    //   
+    // }
+
+    private void OnSliderValueChanged(int value)
     {
-        if (isX)
-        {
-            currentValue = new Vector2Int(value, currentValue.y);
-        }
-        else
-        {
-            currentValue = new Vector2Int(currentValue.x, value);
-        }
+        currentValue = new Vector2Int(value, value);
+        OnCustomLevelCreate(currentValue);
     }
 
     private void OnDisable()
@@ -54,11 +65,13 @@ public class GridCanvasController : MonoBehaviour
     public void OnCustomLevelCreate(Vector2Int size)
     {
         PuzzleGenerator.Instance.CreateLevel(size);
+        smoothCam.OnGridSizeChange(size);
     }
 
     public void OnEasyLevelCreate(Vector2Int size)
     {
         PuzzleGenerator.Instance.CreateLevel(size);
+        smoothCam.OnGridSizeChange(size);
     }
 
     public void Subscription()
