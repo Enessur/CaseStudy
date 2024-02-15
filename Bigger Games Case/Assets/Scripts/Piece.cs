@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cinemachine.Utility;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using Lean.Touch;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using Color = UnityEngine.Color;
+using Task = System.Threading.Tasks.Task;
 
 public class Piece : PuzzleItem
 {
@@ -10,10 +16,12 @@ public class Piece : PuzzleItem
     [SerializeField] protected LeanSelectableByFinger leanSelectableByFinger;
     [SerializeField] private List<Node> _nodes = new();
     [SerializeField] private GameObject orginPoint;
-    
+
+    private Vector3 lastDragPosition;
     private Node _firstNode;
     private int _nodeCount;
     private bool _isPlaced;
+    private bool _inMatrixNode;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
 
@@ -25,10 +33,24 @@ public class Piece : PuzzleItem
         leanSelectableByFinger.OnSelectedFinger.AddListener(OnFingerDown);
     }
 
+    private void OnEnable()
+    {
+        LevelManager.onLevelResetAnimation += ResetAnimation;
+    }
+
+    private void OnDisable()
+    {
+        LevelManager.onLevelResetAnimation -= ResetAnimation;
+    }
+
     private void OnFingerUp(LeanFinger leanFinger)
     {
         TryShifting();
         ChangeLayerOnFingerUp();
+        if (!_isPlaced)
+        {
+            SlideBack();
+        }
     }
 
     private void OnFingerDown(LeanFinger leanFinger)
@@ -61,18 +83,30 @@ public class Piece : PuzzleItem
         if (!pair.Item1)
         {
             Debug.Log("Not Found!!");
+            transform.position = lastDragPosition;
+
             return;
         }
 
-        if (Vector3.Distance(nodePos, pair.Item2.transform.position) > SnapDistance)
+        float distance = Vector3.Distance(nodePos, pair.Item2.transform.position);
+        if (distance > SnapDistance)
         {
+            _inMatrixNode = false;
+            if (distance < 2)
+            {
+                transform.position = lastDragPosition;
+            }
+
             return;
         }
+
 
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
         if (!t.Item1)
         {
             Debug.Log("Cant Assign");
+            transform.position = lastDragPosition;
+
             return;
         }
 
@@ -83,6 +117,16 @@ public class Piece : PuzzleItem
 
         _isPlaced = true;
         Shift(t.Item2);
+    }
+
+    public void StartPosition()
+    {
+        lastDragPosition = transform.position;
+    }
+
+    private void SlideBack()
+    {
+        transform.position += new Vector3(0, -1.5f, 0);
     }
 
     public void AddNode(Node node)
@@ -128,14 +172,17 @@ public class Piece : PuzzleItem
             {
                 minX = node.Coordinate.x;
             }
+
             if (node.Coordinate.y < minY)
             {
                 minY = node.Coordinate.y;
             }
+
             if (node.Coordinate.x > maxX)
             {
                 maxX = node.Coordinate.x;
             }
+
             if (node.Coordinate.y > maxY)
             {
                 maxY = node.Coordinate.y;
@@ -163,16 +210,20 @@ public class Piece : PuzzleItem
 
     private void ChangeLayerOnFingerUp()
     {
-
         foreach (var node in _nodes)
         {
             node.SortingLayerDown();
         }
+
+        // if (!_isPlaced)
+        // {
+        //     SlideBack();
+        // }
     }
 
     private void ChangeLayerOnFingerDown()
     {
-        transform.position += new Vector3(0, 1.5f, 0); 
+        transform.position += new Vector3(0, 1.5f, 0);
 
         foreach (var node in _nodes)
         {
@@ -190,6 +241,16 @@ public class Piece : PuzzleItem
         Destroy(gameObject);
     }
 
+    private void ResetAnimation()
+    {
+        foreach (var node in _nodes)
+        {
+            node.transform.DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration)
+                .SetEase(Ease.OutSine).OnComplete(()
+                => node.transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
+        }
+    }
+
     public void ShiftNodesToOrigin()
     {
         Vector3 offset = Vector3.zero;
@@ -204,5 +265,4 @@ public class Piece : PuzzleItem
             node.transform.localPosition -= offset;
         }
     }
-    
 }

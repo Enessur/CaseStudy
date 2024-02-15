@@ -1,11 +1,12 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
 
     public static Action onLevelReset;
+    public static Action onLevelResetAnimation;
     private void OnEnable()
     {
         PuzzleGenerator.OnAllPiecesPlaced += OnAllPiecesPlaced;
@@ -22,6 +23,13 @@ public class LevelManager : MonoBehaviour
 
     private void ResetLevelWithAnimation()
     {
+        StartCoroutine(StartAnimationRoutine());
+    }
+
+    private IEnumerator StartAnimationRoutine()
+    {
+        onLevelResetAnimation?.Invoke();
+        yield return new WaitForSeconds(LevelEndingAnimator.GetNextLevelDuration());
         ResetLevel();
     }
 

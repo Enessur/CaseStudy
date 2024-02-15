@@ -242,7 +242,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         {
             Vector2Int pieceSize = p.ReturnPieceSize();
             p.ShiftNodesToOrigin();
-            if (placeX < puzzleSize.x)
+            if (placeX < puzzleSize.x -1)
             {
                 Debug.Log(placeX);
                 placeX += pieceSize.x + offset;
@@ -250,17 +250,17 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
                 {
                     placeY = pieceSize.y;
                 }
-                p.transform.position = new Vector3(placeX, -placeY);
+                p.transform.position = new Vector3(placeX-1, -placeY);
 
             }
             else
             {
                 placeY += pieceSize.y + offset;
                 placeX = 0;
-                p.transform.position = new Vector3(placeX, -placeY);
+                p.transform.position = new Vector3(placeX-1, -placeY);
 
             }
-
+            p.StartPosition();
         }
     }
 
