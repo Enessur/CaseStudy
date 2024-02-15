@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cinemachine.Utility;
 using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
 using Lean.Touch;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using Color = UnityEngine.Color;
-using Task = System.Threading.Tasks.Task;
 
 public class Piece : PuzzleItem
 {
@@ -92,7 +87,7 @@ public class Piece : PuzzleItem
         if (distance > SnapDistance)
         {
             _inMatrixNode = false;
-            if (distance < 2)
+            if (distance < 4)
             {
                 transform.position = lastDragPosition;
             }
@@ -245,8 +240,7 @@ public class Piece : PuzzleItem
     {
         foreach (var node in _nodes)
         {
-            node.transform.DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration)
-                .SetEase(Ease.OutSine).OnComplete(()
+            node.transform.DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration,RotateMode.FastBeyond360).OnComplete(()
                 => node.transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
         }
     }
