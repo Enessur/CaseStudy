@@ -7,6 +7,13 @@ public class LevelManager : MonoBehaviour
 
     public static Action onLevelReset;
     public static Action onLevelResetAnimation;
+
+    private void Start()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 120;
+    }
+
     private void OnEnable()
     {
         PuzzleGenerator.OnAllPiecesPlaced += OnAllPiecesPlaced;
