@@ -12,10 +12,12 @@ public class GridTable : MonoBehaviour, IResetable
     private Vector2Int _size;
 
     public static Action onGridCreate;
+    public static Action clearGridHighlight;
 
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
+        
     }
     
     public void OnDisable()
@@ -131,24 +133,31 @@ public class GridTable : MonoBehaviour, IResetable
 
     public void TryHighlight(List<Node> nodes, Node firstNode, MatrixNode matrixNode)
     {
+        clearGridHighlight?.Invoke();
         Vector2Int offset = matrixNode.GetCoordinate();
-        List<MatrixNode> availableNodes = new();
+        List<MatrixNode> availableNodes = new List<MatrixNode>();
+    
         foreach (var node in nodes)
         {
             var c = node.Coordinate + offset;
             if (!(c.x < _size.x) || !(c.y < _size.y) || !(c.x >= 0) || !(c.y >= 0))
             {
-                return ;
+                return;
             }
 
             var mn = _matrixNodeDictionary[new Vector2Int(c.x, c.y)];
-           
+       
             if (mn.HasNode())
             {
-                return ;
+                return;
             }
             availableNodes.Add(mn);
-            matrixNode.SetHighlight(true);
+        }
+        
+        foreach (var node in availableNodes)
+        {
+            node.SetHighlight(true);
         }
     }
+
 }

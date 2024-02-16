@@ -10,11 +10,13 @@ public class MatrixNode : MonoBehaviour, IResetable
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
+        GridTable.clearGridHighlight += ResetGridColor;
     }
-
+    
     public void OnDisable()
     {
         ((IResetable)this).Unsubscription();
+        GridTable.clearGridHighlight -= ResetGridColor;
     }
 
     public void Init(MatrixNodeData matrixNodeData)
@@ -49,6 +51,10 @@ public class MatrixNode : MonoBehaviour, IResetable
         UnsetNode();
     }
 
+    private void ResetGridColor()
+    {
+        SetHighlight(false);
+    }
     public void SetHighlight(bool state)
     {
         if (state)

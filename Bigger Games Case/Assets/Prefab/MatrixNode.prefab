@@ -133,4 +133,6 @@ MonoBehaviour:
     coordinate: {x: 0, y: 0}
     hasNode: 0
     node: {fileID: 0}
-  nodeCheckPrefab: {fileID: 6586945287168808441, guid: 9ad77904d22bc4c4cb8a1671423aa76b, type: 3}
+  spriteRenderer: {fileID: 5530928739690082006}
+  activeColor: {r: 0, g: 1, b: 0.05962348, a: 1}
+  passiveColor: {r: 0.47058824, g: 0.47058824, b: 0.47058824, a: 1}

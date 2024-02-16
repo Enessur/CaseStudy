@@ -12,7 +12,8 @@ public class Piece : PuzzleItem
     [SerializeField] protected LeanSelectableByFinger leanSelectableByFinger;
     [SerializeField] private List<Node> _nodes = new();
     [SerializeField] private GameObject orginPoint;
-
+    [SerializeField] private GridTable table;
+    private readonly WaitForEndOfFrame _endOfFrame = new();
     private Vector3 lastDragPosition;
     private Node _firstNode;
     private int _nodeCount;
@@ -21,7 +22,7 @@ public class Piece : PuzzleItem
     private bool _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
-    private GridTable table = PuzzleGenerator.Instance.GridTable;
+
 
     public void Init(Transform parent, Color groupColor)
     {
@@ -29,6 +30,11 @@ public class Piece : PuzzleItem
         gameObject.name = $"Piece_{groupColor.r}.{groupColor.g}.{groupColor.b}";
         leanSelectableByFinger.OnSelectedFingerUp.AddListener(OnFingerUp);
         leanSelectableByFinger.OnSelectedFinger.AddListener(OnFingerDown);
+    }
+
+    private void Start()
+    {
+        table = PuzzleGenerator.Instance.GridTable;
     }
 
     private void OnEnable()
@@ -61,6 +67,7 @@ public class Piece : PuzzleItem
         _isFingerDown = true;
         StartCoroutine(HoldCoroutine());
     }
+
     private void UnRegisterNodes()
     {
         if (_isPlaced)
@@ -75,13 +82,13 @@ public class Piece : PuzzleItem
 
         _isPlaced = false;
     }
-    
+
     private IEnumerator HoldCoroutine()
     {
         while (_isFingerDown)
         {
             MatrixNodeCheck();
-            yield return null;
+            yield return _endOfFrame;
         }
     }
 
@@ -93,19 +100,21 @@ public class Piece : PuzzleItem
         }
 
         table.TryHighlight(_nodes, _firstNode, pair.Item2);
-        
     }
+
     private void TryShifting()
     {
+        GridTable.clearGridHighlight?.Invoke();
         if (TryGetPair(out var pair))
         {
+            transform.position = lastDragPosition;
+
             return;
         }
 
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
         if (!t.Item1)
         {
-            Debug.Log("Cant Assign");
             transform.position = lastDragPosition;
             return;
         }
@@ -126,7 +135,6 @@ public class Piece : PuzzleItem
 
         if (!pair.Item1)
         {
-            transform.position = lastDragPosition;
             return true;
         }
 
@@ -134,7 +142,6 @@ public class Piece : PuzzleItem
         if (distance > SnapDistance)
         {
             _inMatrixNode = false;
-            transform.position = lastDragPosition;
             return true;
         }
 
