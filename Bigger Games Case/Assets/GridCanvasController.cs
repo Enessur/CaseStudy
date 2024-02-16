@@ -12,8 +12,7 @@ public struct GridCanvasLevelButtonPair
 [Serializable]
 public struct GridCanvasLevelSliderPair
 {
-    // public SliderController sliderX;
-    // public SliderController sliderY;
+   
     public SliderController sliderXY;
 }
 
@@ -24,6 +23,7 @@ public class GridCanvasController : MonoBehaviour
     [SerializeField] private Vector2Int currentValue;
     [SerializeField] private SmoothCam smoothCam;
     
+    public static Action CloseMenuOnSelection;
     private void OnEnable()
     {
         foreach (var p in gridCanvasLevelButtonPairs)
@@ -32,24 +32,9 @@ public class GridCanvasController : MonoBehaviour
             p.levelButton.onClick.AddListener(ButtonClicked);
         }
         gridCanvasLevelSliderPair.sliderXY.onSliderValueChanged += OnSliderValueChanged;
-        
-        // gridCanvasLevelSliderPair.sliderX.onSliderValueChangedInt += OnSliderValueChangedInt;
-        // gridCanvasLevelSliderPair.sliderY.onSliderValueChangedInt += OnSliderValueChangedInt;
-    }
+         }
 
-    // private void OnSliderValueChangedInt(int value, bool isX)
-    // {
-    //     if (isX)
-    //     {
-    //         currentValue = new Vector2Int(value, currentValue.y);
-    //     }
-    //     else
-    //     {
-    //         currentValue = new Vector2Int(currentValue.x, value);
-    //     }
-    //     OnCustomLevelCreate(currentValue);
-    //   
-    // }
+     
 
     private void OnSliderValueChanged(int value)
     {
@@ -59,6 +44,7 @@ public class GridCanvasController : MonoBehaviour
 
     private void OnDisable()
     {
+        gridCanvasLevelSliderPair.sliderXY.onSliderValueChanged -= OnSliderValueChanged;
     }
 
 
@@ -72,6 +58,7 @@ public class GridCanvasController : MonoBehaviour
     {
         PuzzleGenerator.Instance.CreateLevel(size);
         smoothCam.OnGridSizeChange(size);
+        CloseMenuOnSelection?.Invoke();
     }
 
     public void Subscription()

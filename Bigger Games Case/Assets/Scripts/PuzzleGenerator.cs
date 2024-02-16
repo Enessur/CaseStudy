@@ -234,7 +234,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         piece.SetNodesColor(newColor);
     }
 
-    float placeX, placeY, offset = 0.2f;
+    float placeX, placeY, offset = 0.1f;
 
     private void Shuffle()
     {
