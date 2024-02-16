@@ -1,9 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MatrixNode : MonoBehaviour, IResetable
 {
     [SerializeField] private MatrixNodeData data;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Color activeColor;
+    [SerializeField] private Color passiveColor;
 
     public void OnEnable()
     {
@@ -45,5 +47,17 @@ public class MatrixNode : MonoBehaviour, IResetable
     void IResetable.Reset()
     {
         UnsetNode();
+    }
+
+    public void SetHighlight(bool state)
+    {
+        if (state)
+        {
+            spriteRenderer.color = activeColor;
+        }
+        else
+        {
+            spriteRenderer.color = passiveColor;
+        }
     }
 }

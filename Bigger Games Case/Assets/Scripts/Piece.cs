@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Lean.Touch;
@@ -17,8 +18,10 @@ public class Piece : PuzzleItem
     private int _nodeCount;
     private bool _isPlaced;
     private bool _inMatrixNode;
+    private bool _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
+    private GridTable table = PuzzleGenerator.Instance.GridTable;
 
     public void Init(Transform parent, Color groupColor)
     {
@@ -46,14 +49,18 @@ public class Piece : PuzzleItem
         {
             SlideBack();
         }
+
+        _isFingerDown = false;
+        StopCoroutine(HoldCoroutine());
     }
 
     private void OnFingerDown(LeanFinger leanFinger)
     {
         UnRegisterNodes();
         ChangeLayerOnFingerDown();
+        _isFingerDown = true;
+        StartCoroutine(HoldCoroutine());
     }
-
     private void UnRegisterNodes()
     {
         if (_isPlaced)
@@ -68,40 +75,38 @@ public class Piece : PuzzleItem
 
         _isPlaced = false;
     }
+    
+    private IEnumerator HoldCoroutine()
+    {
+        while (_isFingerDown)
+        {
+            MatrixNodeCheck();
+            yield return null;
+        }
+    }
 
+    private void MatrixNodeCheck()
+    {
+        if (TryGetPair(out var pair))
+        {
+            return;
+        }
+
+        table.TryHighlight(_nodes, _firstNode, pair.Item2);
+        
+    }
     private void TryShifting()
     {
-        GridTable table = PuzzleGenerator.Instance.GridTable;
-        var nodePos = _firstNode.transform.position;
-        var pair = table.GetClosestEmptyMatrixNode(nodePos);
-
-        if (!pair.Item1)
+        if (TryGetPair(out var pair))
         {
-            Debug.Log("Not Found!!");
-            transform.position = lastDragPosition;
-
             return;
         }
-
-        float distance = Vector3.Distance(nodePos, pair.Item2.transform.position);
-        if (distance > SnapDistance)
-        {
-            _inMatrixNode = false;
-            if (distance < 4)
-            {
-                transform.position = lastDragPosition;
-            }
-
-            return;
-        }
-
 
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
         if (!t.Item1)
         {
             Debug.Log("Cant Assign");
             transform.position = lastDragPosition;
-
             return;
         }
 
@@ -112,6 +117,28 @@ public class Piece : PuzzleItem
 
         _isPlaced = true;
         Shift(t.Item2);
+    }
+
+    private bool TryGetPair(out (bool, MatrixNode) pair)
+    {
+        var nodePos = _firstNode.transform.position;
+        pair = table.GetClosestEmptyMatrixNode(nodePos);
+
+        if (!pair.Item1)
+        {
+            transform.position = lastDragPosition;
+            return true;
+        }
+
+        float distance = Vector3.Distance(nodePos, pair.Item2.transform.position);
+        if (distance > SnapDistance)
+        {
+            _inMatrixNode = false;
+            transform.position = lastDragPosition;
+            return true;
+        }
+
+        return false;
     }
 
     public void StartPosition()
@@ -209,11 +236,6 @@ public class Piece : PuzzleItem
         {
             node.SortingLayerDown();
         }
-
-        // if (!_isPlaced)
-        // {
-        //     SlideBack();
-        // }
     }
 
     private void ChangeLayerOnFingerDown()
@@ -240,8 +262,10 @@ public class Piece : PuzzleItem
     {
         foreach (var node in _nodes)
         {
-            node.transform.DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration,RotateMode.FastBeyond360).OnComplete(()
-                => node.transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
+            node.transform
+                .DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration, RotateMode.FastBeyond360)
+                .OnComplete(()
+                    => node.transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
         }
     }
 

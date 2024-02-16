@@ -127,4 +127,28 @@ public class GridTable : MonoBehaviour, IResetable
         }
         return (true, matrixNode.transform.position - firsNode.transform.position);
     }
+
+
+    public void TryHighlight(List<Node> nodes, Node firstNode, MatrixNode matrixNode)
+    {
+        Vector2Int offset = matrixNode.GetCoordinate();
+        List<MatrixNode> availableNodes = new();
+        foreach (var node in nodes)
+        {
+            var c = node.Coordinate + offset;
+            if (!(c.x < _size.x) || !(c.y < _size.y) || !(c.x >= 0) || !(c.y >= 0))
+            {
+                return ;
+            }
+
+            var mn = _matrixNodeDictionary[new Vector2Int(c.x, c.y)];
+           
+            if (mn.HasNode())
+            {
+                return ;
+            }
+            availableNodes.Add(mn);
+            matrixNode.SetHighlight(true);
+        }
+    }
 }

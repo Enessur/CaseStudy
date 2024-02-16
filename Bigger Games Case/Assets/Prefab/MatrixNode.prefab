@@ -133,3 +133,4 @@ MonoBehaviour:
     coordinate: {x: 0, y: 0}
     hasNode: 0
     node: {fileID: 0}
+  nodeCheckPrefab: {fileID: 6586945287168808441, guid: 9ad77904d22bc4c4cb8a1671423aa76b, type: 3}
