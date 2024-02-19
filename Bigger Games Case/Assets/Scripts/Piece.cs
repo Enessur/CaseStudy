@@ -18,9 +18,8 @@ public class Piece : PuzzleItem
     private Vector3 lastDragPosition;
     private Node _firstNode;
     private int _nodeCount;
-    private bool _isPlaced;
-    private bool _inMatrixNode;
-    private bool _isFingerDown;
+ 
+    private bool _isPlaced, _inMatrixNode, _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
 
@@ -37,17 +36,7 @@ public class Piece : PuzzleItem
     {
         table = PuzzleGenerator.Instance.GridTable;
     }
-
-    private void OnEnable()
-    {
-        LevelManager.onLevelResetAnimation += ResetAnimation;
-    }
-
-    private void OnDisable()
-    {
-        LevelManager.onLevelResetAnimation -= ResetAnimation;
-    }
-
+    
     private void OnFingerUp(LeanFinger leanFinger)
     {
         HapticFeedBack();
@@ -200,8 +189,7 @@ public class Piece : PuzzleItem
             node.SetColor(newColor);
         }
     }
-
-
+    
     public Vector2Int ReturnPieceSize()
     {
         int minX = int.MaxValue;
@@ -279,18 +267,7 @@ public class Piece : PuzzleItem
 
         Destroy(gameObject);
     }
-
-    private void ResetAnimation()
-    {
-        foreach (var node in _nodes)
-        {
-            node.transform
-                .DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration, RotateMode.FastBeyond360)
-                .OnComplete(()
-                    => node.transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
-        }
-    }
-
+    
     public void ShiftNodesToOrigin()
     {
         Vector3 offset = Vector3.zero;

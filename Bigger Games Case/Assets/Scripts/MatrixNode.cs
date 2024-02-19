@@ -45,6 +45,11 @@ public class MatrixNode : MonoBehaviour, IResetable
         return data.coordinate;
     }
 
+    public Node GetNode()
+    {
+        return data.node;
+    }
+
 
     void IResetable.Reset()
     {
@@ -66,4 +71,6 @@ public class MatrixNode : MonoBehaviour, IResetable
             spriteRenderer.color = passiveColor;
         }
     }
+
+  
 }

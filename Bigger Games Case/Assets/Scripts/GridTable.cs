@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,19 +11,23 @@ public class GridTable : MonoBehaviour, IResetable
     private int _occupiedNodeCount;
     private int _targetCount;
     private Vector2Int _size;
-
+    private float _startDelay, _delayTime;
     public static Action onGridCreate;
     public static Action clearGridHighlight;
 
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
+        LevelManager.onLevelResetAnimation += ResetAnimation;
+
         
     }
     
     public void OnDisable()
     {
         ((IResetable)this).Unsubscription();
+        LevelManager.onLevelResetAnimation -= ResetAnimation;
+
     }
 
     public void GenerateGrid(Vector2Int size)
@@ -147,6 +152,7 @@ public class GridTable : MonoBehaviour, IResetable
 
             var mn = _matrixNodeDictionary[new Vector2Int(c.x, c.y)];
        
+            
             if (mn.HasNode())
             {
                 return;
@@ -158,6 +164,25 @@ public class GridTable : MonoBehaviour, IResetable
         {
             node.SetHighlight(true);
         }
+        
     }
 
+    public void ResetAnimation()
+    {
+        _startDelay = 0;
+        for (int i = 0; i < _size.x; i++)
+        {
+            for (int j = 0; j < _size.x; j++)
+            {
+                _delayTime = j /10f;
+                MatrixNode matrixNode = _matrixNodeDictionary[new Vector2Int(i, j)];
+                Node node = matrixNode.GetNode();
+                node.SetDelay(_startDelay + _delayTime);
+                node.CompleteAnimation();
+            }
+
+            _startDelay += 0.1f;
+        }
+        LevelEndingAnimator.PuzzleSizeDelay = _delayTime;
+    }
 }

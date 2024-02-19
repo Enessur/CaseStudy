@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using DG.Tweening;
 using UnityEngine;
 
 public class Node : PuzzleItem
@@ -12,14 +13,15 @@ public class Node : PuzzleItem
     public Piece Piece => _piece;
     private Piece _piece;
     public bool HasPiece => _hasPiece;
-    private bool _hasPiece; 
-    public Vector2Int Coordinate =>_coordinate;
-    
+    private bool _hasPiece;
+    public Vector2Int Coordinate => _coordinate;
+
     public static Action onReload;
-    
-    [SerializeField]private Vector2Int _coordinate;
-    [SerializeField]private MatrixNode _matrixNode;
+
+    [SerializeField] private Vector2Int _coordinate;
+    [SerializeField] private MatrixNode _matrixNode;
     private bool _hasMatrixNode;
+    private float _animationDelay;
 
     public void Init()
     {
@@ -56,6 +58,7 @@ public class Node : PuzzleItem
     {
         renderer.sortingOrder++;
     }
+
     public void SortingLayerDown()
     {
         renderer.sortingOrder--;
@@ -82,6 +85,23 @@ public class Node : PuzzleItem
         _piece = null;
     }
 
+    public void SetDelay(float delay)
+    {
+        _animationDelay = delay;
+    }
 
-   
+    public void CompleteAnimation()
+    {
+        Invoke(nameof(PlayAnimation), _animationDelay);
+    }
+
+    
+
+    private void PlayAnimation()
+    {
+        transform
+            .DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration, RotateMode.FastBeyond360)
+            .OnComplete(
+                () => transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
+    }
 }

@@ -50,6 +50,7 @@ public class GridCanvasController : MonoBehaviour
 
     public void OnCustomLevelCreate(Vector2Int size)
     {
+        SoundManager.Instance.PlaySound("SelectLevel");
         PuzzleGenerator.Instance.CreateLevel(size);
         smoothCam.OnGridSizeChange(size);
     }
