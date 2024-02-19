@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-
     public static Action onLevelReset;
     public static Action onLevelResetAnimation;
+    public static Action onLevelReload;
 
     private void Start()
     {
@@ -17,12 +17,21 @@ public class LevelManager : MonoBehaviour
     private void OnEnable()
     {
         PuzzleGenerator.OnAllPiecesPlaced += OnAllPiecesPlaced;
+        ReloadButton.onReloadClicked += OnReloadClicked;
     }
+
+
     private void OnDisable()
     {
         PuzzleGenerator.OnAllPiecesPlaced -= OnAllPiecesPlaced;
+        ReloadButton.onReloadClicked -= OnReloadClicked;
     }
-   
+
+    private void OnReloadClicked()
+    {
+        onLevelReload?.Invoke();
+    }
+
     private void OnAllPiecesPlaced()
     {
         ResetLevelWithAnimation();

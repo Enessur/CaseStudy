@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using Lean.Touch;
 using UnityEngine;
-using CandyCoded;
-using UnityEngine.UI;
 using Color = UnityEngine.Color;
 
 public class Piece : PuzzleItem
@@ -26,6 +23,16 @@ public class Piece : PuzzleItem
     public static Action<bool, Piece> onPieceStateChanged;
 
 
+    private void OnEnable()
+    {
+        LevelManager.onLevelReload += ReloadPuzzle;
+    }
+
+    private void OnDisable()
+    {
+        LevelManager.onLevelReload -= ReloadPuzzle;
+    }
+
     public void Init(Transform parent, Color groupColor)
     {
         transform.parent = parent;
@@ -44,11 +51,6 @@ public class Piece : PuzzleItem
         HapticFeedBack();
         TryShifting();
         ChangeLayerOnFingerUp();
-        if (!_isPlaced)
-        {
-            SlideBack();
-        }
-
         _isFingerDown = false;
         StopCoroutine(HoldCoroutine());
     }
@@ -157,14 +159,14 @@ public class Piece : PuzzleItem
         return false;
     }
 
+    private void ReloadPuzzle()
+    {
+        lastDragPosition = transform.position;
+        UnRegisterNodes();
+    }
     public void StartPosition()
     {
         lastDragPosition = transform.position;
-    }
-
-    private void SlideBack()
-    {
-        transform.position += new Vector3(0, -1.5f, 0);
     }
 
     public void AddNode(Node node)
@@ -177,7 +179,7 @@ public class Piece : PuzzleItem
 
         _nodeCount++;
     }
-
+    
     public void RecalculateCoordinates()
     {
         var position = _firstNode.transform.position;
