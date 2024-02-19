@@ -5,6 +5,7 @@ using DG.Tweening;
 using Lean.Touch;
 using UnityEngine;
 using CandyCoded;
+using UnityEngine.UI;
 using Color = UnityEngine.Color;
 
 public class Piece : PuzzleItem
@@ -14,6 +15,7 @@ public class Piece : PuzzleItem
     [SerializeField] private List<Node> _nodes = new();
     [SerializeField] private GameObject orginPoint;
     [SerializeField] private GridTable table;
+    
     private readonly WaitForEndOfFrame _endOfFrame = new();
     private Vector3 lastDragPosition;
     private Node _firstNode;
@@ -53,6 +55,10 @@ public class Piece : PuzzleItem
 
     private void HapticFeedBack()
     {
+        if (!Settings.Instance.vibrationToggle.isOn)
+        {
+            return;
+        }
         CandyCoded.HapticFeedback.HapticFeedback.LightFeedback();
     }
 
