@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Lean.Touch;
 using UnityEngine;
+using CandyCoded;
 using Color = UnityEngine.Color;
 
 public class Piece : PuzzleItem
@@ -49,6 +50,7 @@ public class Piece : PuzzleItem
 
     private void OnFingerUp(LeanFinger leanFinger)
     {
+        HapticFeedBack();
         TryShifting();
         ChangeLayerOnFingerUp();
         if (!_isPlaced)
@@ -60,8 +62,14 @@ public class Piece : PuzzleItem
         StopCoroutine(HoldCoroutine());
     }
 
+    private void HapticFeedBack()
+    {
+        CandyCoded.HapticFeedback.HapticFeedback.LightFeedback();
+    }
+
     private void OnFingerDown(LeanFinger leanFinger)
     {
+        HapticFeedBack();
         UnRegisterNodes();
         ChangeLayerOnFingerDown();
         _isFingerDown = true;
