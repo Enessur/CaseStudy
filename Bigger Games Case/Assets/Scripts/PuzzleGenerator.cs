@@ -66,6 +66,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
 
         if (_totalPieceCount == _placedPieceCount)
         {
+            SoundManager.Instance.PlaySound("Complete");
             OnAllPiecesPlaced?.Invoke();
         }
     }

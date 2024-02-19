@@ -69,6 +69,7 @@ public class Piece : PuzzleItem
 
     private void OnFingerDown(LeanFinger leanFinger)
     {
+        SoundManager.Instance.PlaySound("Click");
         HapticFeedBack();
         UnRegisterNodes();
         ChangeLayerOnFingerDown();
@@ -115,15 +116,14 @@ public class Piece : PuzzleItem
         GridTable.clearGridHighlight?.Invoke();
         if (TryGetPair(out var pair))
         {
-            transform.position = lastDragPosition;
-
+            PlaceBack();
             return;
         }
 
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
         if (!t.Item1)
         {
-            transform.position = lastDragPosition;
+            PlaceBack();
             return;
         }
 
@@ -134,6 +134,12 @@ public class Piece : PuzzleItem
 
         _isPlaced = true;
         Shift(t.Item2);
+    }
+
+    private void PlaceBack()
+    {
+        SoundManager.Instance.PlaySound("NotPlaced");
+        transform.position = lastDragPosition;
     }
 
     private bool TryGetPair(out (bool, MatrixNode) pair)
@@ -236,6 +242,7 @@ public class Piece : PuzzleItem
 
     public void Shift(Vector3 value)
     {
+        SoundManager.Instance.PlaySound("Placed");
         transform.position += value;
     }
 
