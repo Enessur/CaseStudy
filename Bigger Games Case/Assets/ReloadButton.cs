@@ -6,8 +6,7 @@ public class ReloadButton : MonoBehaviour
 {
     [SerializeField] private Button button;
     public static Action onReloadClicked;
-
-
+    
     private void OnEnable()
     {
         button.onClick.AddListener(OnReloadClick);

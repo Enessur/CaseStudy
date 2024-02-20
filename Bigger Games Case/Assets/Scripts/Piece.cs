@@ -12,15 +12,15 @@ public class Piece : PuzzleItem
     [SerializeField] private List<Node> _nodes = new();
     [SerializeField] private GameObject orginPoint;
     [SerializeField] private GridTable table;
-    
+
     private readonly WaitForEndOfFrame _endOfFrame = new();
     private Vector3 lastDragPosition;
     private Node _firstNode;
     private int _nodeCount;
- 
     private bool _isPlaced, _inMatrixNode, _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
+    public static Action clearGridHighlight;
 
 
     private void OnEnable()
@@ -45,27 +45,23 @@ public class Piece : PuzzleItem
     {
         table = PuzzleGenerator.Instance.GridTable;
     }
-    
+
     private void OnFingerUp(LeanFinger leanFinger)
     {
+     
         HapticFeedBack();
         TryShifting();
         ChangeLayerOnFingerUp();
         _isFingerDown = false;
         StopCoroutine(HoldCoroutine());
     }
-
-    private void HapticFeedBack()
+    
+    private void OnFingerDown(LeanFinger leanFinger)
     {
-        if (!Settings.Instance.vibrationToggle.isOn)
+        if (GridTable.OnAnimation)
         {
             return;
         }
-        CandyCoded.HapticFeedback.HapticFeedback.LightFeedback();
-    }
-
-    private void OnFingerDown(LeanFinger leanFinger)
-    {
         SoundManager.Instance.PlaySound("Click");
         HapticFeedBack();
         UnRegisterNodes();
@@ -94,6 +90,7 @@ public class Piece : PuzzleItem
         while (_isFingerDown)
         {
             MatrixNodeCheck();
+            clearGridHighlight?.Invoke();
             yield return _endOfFrame;
         }
     }
@@ -158,12 +155,22 @@ public class Piece : PuzzleItem
 
         return false;
     }
+    private void HapticFeedBack()
+    {
+        if (!Settings.Instance.vibrationToggle.isOn)
+        {
+            return;
+        }
+
+        CandyCoded.HapticFeedback.HapticFeedback.LightFeedback();
+    }
 
     private void ReloadPuzzle()
     {
-        lastDragPosition = transform.position;
+        transform.position = lastDragPosition;
         UnRegisterNodes();
     }
+
     public void StartPosition()
     {
         lastDragPosition = transform.position;
@@ -179,7 +186,7 @@ public class Piece : PuzzleItem
 
         _nodeCount++;
     }
-    
+
     public void RecalculateCoordinates()
     {
         var position = _firstNode.transform.position;
@@ -197,7 +204,7 @@ public class Piece : PuzzleItem
             node.SetColor(newColor);
         }
     }
-    
+
     public Vector2Int ReturnPieceSize()
     {
         int minX = int.MaxValue;
@@ -275,7 +282,7 @@ public class Piece : PuzzleItem
 
         Destroy(gameObject);
     }
-    
+
     public void ShiftNodesToOrigin()
     {
         Vector3 offset = Vector3.zero;

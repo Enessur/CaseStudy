@@ -6,6 +6,7 @@ using UnityEngine;
 public class GridTable : MonoBehaviour, IResetable
 {
     [SerializeField] private MatrixNode matrixNodePrefab;
+    public static bool OnAnimation;
     private Dictionary<Vector2Int, MatrixNode> _matrixNodeDictionary = new();
     private int _occupiedNodeCount;
     private int _targetCount;
@@ -13,12 +14,11 @@ public class GridTable : MonoBehaviour, IResetable
     private float _startDelay, _delayTime;
     public static Action onGridCreate;
     public static Action clearGridHighlight;
-
+    
     public void OnEnable()
     {
         ((IResetable)this).Subscription();
         LevelManager.onLevelResetAnimation += ResetAnimation;
-
         
     }
     
@@ -150,7 +150,6 @@ public class GridTable : MonoBehaviour, IResetable
             }
 
             var mn = _matrixNodeDictionary[new Vector2Int(c.x, c.y)];
-       
             
             if (mn.HasNode())
             {
@@ -168,6 +167,7 @@ public class GridTable : MonoBehaviour, IResetable
 
     public void ResetAnimation()
     {
+        OnAnimation = true;
         _startDelay = 0;
         for (int i = 0; i < _size.x; i++)
         {
