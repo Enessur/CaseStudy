@@ -48,7 +48,6 @@ public class Piece : PuzzleItem
 
     private void OnFingerUp(LeanFinger leanFinger)
     {
-     
         HapticFeedBack();
         TryShifting();
         ChangeLayerOnFingerUp();
@@ -74,10 +73,8 @@ public class Piece : PuzzleItem
             {
                 node.UnRegisterMatrixNode();
             }
-
             onPieceStateChanged?.Invoke(false, this);
         }
-
         _isPlaced = false;
     }
 
@@ -85,8 +82,8 @@ public class Piece : PuzzleItem
     {
         while (_isFingerDown)
         {
+            GridTable.clearGridHighlight?.Invoke();
             MatrixNodeCheck();
-            clearGridHighlight?.Invoke();
             yield return _endOfFrame;
         }
     }
@@ -97,7 +94,6 @@ public class Piece : PuzzleItem
         {
             return;
         }
-
         table.TryHighlight(_nodes, _firstNode, pair.Item2);
     }
 
@@ -109,7 +105,6 @@ public class Piece : PuzzleItem
             PlaceBack();
             return;
         }
-
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
         if (!t.Item1)
         {

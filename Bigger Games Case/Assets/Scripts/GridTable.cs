@@ -140,7 +140,6 @@ public class GridTable : MonoBehaviour, IResetable
 
     public void TryHighlight(List<Node> nodes, Node firstNode, MatrixNode matrixNode)
     {
-        clearGridHighlight?.Invoke();
         Vector2Int offset = matrixNode.GetCoordinate();
         List<MatrixNode> availableNodes = new List<MatrixNode>();
     
@@ -169,9 +168,9 @@ public class GridTable : MonoBehaviour, IResetable
     }
 
     public void ResetAnimation()
-    {
+    { 
         OnAnimation = true;
-       leanTouch.SetActive(false);
+        leanTouch.SetActive(false);
         _startDelay = 0;
         for (int i = 0; i < _size.x; i++)
         {
