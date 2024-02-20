@@ -20,8 +20,6 @@ public class Piece : PuzzleItem
     private bool _isPlaced, _inMatrixNode, _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
-    public static Action clearGridHighlight;
-
 
     private void OnEnable()
     {

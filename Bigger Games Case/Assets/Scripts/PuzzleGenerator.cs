@@ -58,6 +58,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         if (state)
         {
             _placedPieceCount++;
+            
         }
         else
         {
@@ -69,7 +70,10 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
             SoundManager.Instance.PlaySound("Complete");
             OnAllPiecesPlaced?.Invoke();
         }
+
     }
+
+  
 
 
     private void GenerateGridTable()

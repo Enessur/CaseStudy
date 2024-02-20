@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &15213422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798a437c0fb1eaf4fa08bcccc16aeca0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  button: {fileID: 896462413}
+  leanSelectableByFinger: {fileID: 896462416}
 --- !u!4 &15213423
 Transform:
   m_ObjectHideFlags: 0
@@ -161,12 +161,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 15213421}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -447.24527, y: -960.64136, z: -0.044664923}
-  m_LocalScale: {x: 0.6217617, y: 0.6217617, z: 0.6217617}
+  m_LocalPosition: {x: 0.680542, y: -1.0314941, z: -0.071836084}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1319740761}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &23795927
 GameObject:
@@ -684,7 +684,7 @@ RectTransform:
   - {fileID: 23795928}
   - {fileID: 750617893}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2907,7 +2907,7 @@ RectTransform:
   - {fileID: 1944362556}
   - {fileID: 457061881}
   m_Father: {fileID: 1319740761}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2949,6 +2949,8 @@ GameObject:
   - component: {fileID: 896462415}
   - component: {fileID: 896462414}
   - component: {fileID: 896462413}
+  - component: {fileID: 896462416}
+  - component: {fileID: 896462419}
   m_Layer: 5
   m_Name: Reload Button
   m_TagString: Untagged
@@ -3020,19 +3022,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 896462414}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 15213422}
-        m_TargetAssemblyTypeName: ReloadButton, Assembly-CSharp
-        m_MethodName: OnReloadClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &896462414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3071,6 +3061,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 896462411}
   m_CullTransparentMesh: 1
+--- !u!114 &896462416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896462411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83dcd8dace8b7fe449d796b980cb121d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selfSelected: 0
+  onSelected:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeselected:
+    m_PersistentCalls:
+      m_Calls: []
+  use: 0
+  onSelectedFinger:
+    m_PersistentCalls:
+      m_Calls: []
+  onSelectedFingerUp:
+    m_PersistentCalls:
+      m_Calls: []
+  onSelectedSelectFinger:
+    m_PersistentCalls:
+      m_Calls: []
+  onSelectedSelectFingerUp:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &896462419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896462411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 798a437c0fb1eaf4fa08bcccc16aeca0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leanSelectableByFinger: {fileID: 896462416}
 --- !u!1 &935722688
 GameObject:
   m_ObjectHideFlags: 0
@@ -3722,7 +3757,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1241312372
 GameObject:
@@ -3905,7 +3940,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 816411748863270396, guid: 37dfbe29fa563dc4db995acb14b113da, type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 816411748863270396, guid: 37dfbe29fa563dc4db995acb14b113da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4079,7 +4114,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 508220095}
-  - {fileID: 15213423}
   - {fileID: 869882037}
   m_Father: {fileID: 750617893}
   m_RootOrder: 0
@@ -4469,7 +4503,7 @@ MonoBehaviour:
   referenceDpi: 200
   guiLayers:
     serializedVersion: 2
-    m_Bits: 32
+    m_Bits: 0
   useTouch: 1
   useHover: 1
   useMouse: 1
@@ -5797,7 +5831,7 @@ Transform:
   m_Children:
   - {fileID: 1776992246}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2029498256
 GameObject:
@@ -6005,7 +6039,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3020174758976507779, guid: 3b2df6b321e70284095f0468e3caaadb, type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 3020174758976507779, guid: 3b2df6b321e70284095f0468e3caaadb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6062,7 +6096,7 @@ PrefabInstance:
       objectReference: {fileID: 1621179599}
     - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7630002782429428809, guid: 1e57f9eef739047499fa6900010b31ca, type: 3}
       propertyPath: m_LocalPosition.x

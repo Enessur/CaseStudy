@@ -71,5 +71,4 @@ public class MatrixNode : MonoBehaviour, IResetable
             spriteRenderer.color = passiveColor;
         }
     }
-
 }
