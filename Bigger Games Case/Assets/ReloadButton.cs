@@ -17,7 +17,7 @@ public class ReloadButton : MonoBehaviour
         button.onClick.RemoveListener(OnReloadClick);
     }
 
-    private void OnReloadClick()
+    public void OnReloadClick()
     {
         onReloadClicked?.Invoke();
     }

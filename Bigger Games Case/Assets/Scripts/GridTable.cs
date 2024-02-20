@@ -6,6 +6,8 @@ using UnityEngine;
 public class GridTable : MonoBehaviour, IResetable
 {
     [SerializeField] private MatrixNode matrixNodePrefab;
+    [SerializeField] private GameObject leanTouch;
+    
     public static bool OnAnimation;
     private Dictionary<Vector2Int, MatrixNode> _matrixNodeDictionary = new();
     private int _occupiedNodeCount;
@@ -19,14 +21,15 @@ public class GridTable : MonoBehaviour, IResetable
     {
         ((IResetable)this).Subscription();
         LevelManager.onLevelResetAnimation += ResetAnimation;
-        
+        PuzzleGenerator.OnNewPuzzleCreated += OnNewPuzzleCreated;
+
     }
     
     public void OnDisable()
     {
         ((IResetable)this).Unsubscription();
         LevelManager.onLevelResetAnimation -= ResetAnimation;
-
+        PuzzleGenerator.OnNewPuzzleCreated -= OnNewPuzzleCreated;
     }
 
     public void GenerateGrid(Vector2Int size)
@@ -168,6 +171,7 @@ public class GridTable : MonoBehaviour, IResetable
     public void ResetAnimation()
     {
         OnAnimation = true;
+       leanTouch.SetActive(false);
         _startDelay = 0;
         for (int i = 0; i < _size.x; i++)
         {
@@ -183,5 +187,12 @@ public class GridTable : MonoBehaviour, IResetable
             _startDelay += 0.1f;
         }
         LevelEndingAnimator.PuzzleSizeDelay = _delayTime;
+        
+    }
+
+    public void OnNewPuzzleCreated()
+    {
+        OnAnimation = false;
+        leanTouch.SetActive(true);
     }
 }

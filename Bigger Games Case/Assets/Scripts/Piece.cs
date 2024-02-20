@@ -58,10 +58,6 @@ public class Piece : PuzzleItem
     
     private void OnFingerDown(LeanFinger leanFinger)
     {
-        if (GridTable.OnAnimation)
-        {
-            return;
-        }
         SoundManager.Instance.PlaySound("Click");
         HapticFeedBack();
         UnRegisterNodes();
@@ -167,6 +163,10 @@ public class Piece : PuzzleItem
 
     private void ReloadPuzzle()
     {
+        if (GridTable.OnAnimation)
+        {
+            return;
+        }
         transform.position = lastDragPosition;
         UnRegisterNodes();
     }

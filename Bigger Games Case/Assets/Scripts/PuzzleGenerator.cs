@@ -14,6 +14,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
 
     public Vector2Int puzzleSize = new(4, 4);
     public static Action OnAllPiecesPlaced;
+    public static Action OnNewPuzzleCreated;
     private List<Piece> _pieces = new();
     private Color[] _pieceColors;
     private float _noiseScale;
@@ -34,6 +35,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
 
     private void CreatePuzzle()
     {
+        OnNewPuzzleCreated?.Invoke();
         GeneratePuzzle();
         _pieces.RemoveAll(x => x == null);
         _totalPieceCount = _pieces.Count;
