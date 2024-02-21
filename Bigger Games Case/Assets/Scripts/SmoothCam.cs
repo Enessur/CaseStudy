@@ -17,7 +17,7 @@ public class SmoothCam : MonoBehaviour
 
         if (gridSize % 2 == 0)
         {
-            target.position = new Vector3(x - 0.5f, -2.5f, -10);
+            target.position = new Vector3(x - 0.5f, -5.5f, -10);
         }
         else
         {

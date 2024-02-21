@@ -262,7 +262,7 @@ public class Piece : PuzzleItem
 
     private void ChangeLayerOnFingerDown()
     {
-        transform.position += new Vector3(0, 1.5f, -1);
+        transform.position += new Vector3(0, 1.5f, 0f);
 
         foreach (var node in _nodes)
         {

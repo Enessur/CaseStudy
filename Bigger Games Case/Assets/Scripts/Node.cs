@@ -53,12 +53,13 @@ public class Node : PuzzleItem
 
     public void SortingLayerUp()
     {
-        renderer.sortingOrder++;
+        transform.position += new Vector3(0, 0, -0.3f);
     }
 
     public void SortingLayerDown()
     {
-        renderer.sortingOrder--;
+        transform.position -= new Vector3(0, 0, -0.3f);
+
     }
 
 
@@ -94,6 +95,9 @@ public class Node : PuzzleItem
     
     private void PlayAnimation()
     {
+        transform.DOMove(transform.position + new Vector3(0, 1, 0), 0.2f)
+            .OnComplete(
+                () =>transform.DOMove(transform.position - new Vector3(0, 1, 0), 0.2f));
         transform
             .DOLocalRotate(new Vector3(0, 0, 360), LevelEndingAnimator.RotateDuration, RotateMode.FastBeyond360)
             .OnComplete(
