@@ -20,6 +20,8 @@ public class Piece : PuzzleItem
     private bool _isPlaced, _inMatrixNode, _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
+    public static Action<Piece> onPushStack;
+    public static Action<Piece> onPopStack;
 
     private void OnEnable()
     {
@@ -122,6 +124,7 @@ public class Piece : PuzzleItem
     private void PlaceBack()
     {
         SoundManager.Instance.PlaySound("NotPlaced");
+        
         transform.position = lastDragPosition;
     }
 
@@ -239,6 +242,7 @@ public class Piece : PuzzleItem
     public void Shift(Vector3 value)
     {
         SoundManager.Instance.PlaySound("Placed");
+        onPushStack?.Invoke(this);
         transform.position += value;
     }
 
@@ -258,7 +262,7 @@ public class Piece : PuzzleItem
 
     private void ChangeLayerOnFingerDown()
     {
-        transform.position += new Vector3(0, 1.5f, 0);
+        transform.position += new Vector3(0, 1.5f, -1);
 
         foreach (var node in _nodes)
         {

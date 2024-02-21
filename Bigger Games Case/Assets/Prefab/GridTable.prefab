@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   matrixNodePrefab: {fileID: 20567926688423790, guid: 7193c38c5b9d7194abce07e5c84de5f2, type: 3}
+  leanTouch: {fileID: 0}

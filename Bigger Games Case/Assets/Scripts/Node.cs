@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using DG.Tweening;
 using UnityEngine;
 
@@ -94,9 +91,7 @@ public class Node : PuzzleItem
     {
         Invoke(nameof(PlayAnimation), _animationDelay);
     }
-
     
-
     private void PlayAnimation()
     {
         transform

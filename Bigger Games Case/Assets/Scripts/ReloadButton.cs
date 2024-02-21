@@ -12,7 +12,7 @@ public class ReloadButton : MonoBehaviour
     private readonly WaitForSeconds _endOfSecond = new WaitForSeconds(1f);
     private bool _isFingerDown, _isHoldPressed;
     private Coroutine _holdCoroutine;
-
+    
     private void OnEnable()
     {
         leanSelectableByFinger.OnSelectedFingerUp.AddListener(OnFingerUp);
