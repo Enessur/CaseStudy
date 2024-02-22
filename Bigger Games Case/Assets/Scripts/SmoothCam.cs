@@ -21,7 +21,7 @@ public class SmoothCam : MonoBehaviour
         }
         else
         {
-            target.position = new Vector3(x, -2.5f, -10);
+            target.position = new Vector3(x, -5.5f, -10);
         }
 
         virtualCamera.m_Lens.OrthographicSize = Mathf.Lerp(6, 17.5f, Mathf.InverseLerp(1, 12, size.y));

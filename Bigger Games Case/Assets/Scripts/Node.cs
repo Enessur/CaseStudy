@@ -53,12 +53,12 @@ public class Node : PuzzleItem
 
     public void SortingLayerUp()
     {
-        transform.position += new Vector3(0, 0, -0.3f);
+        transform.position -= new Vector3(0, 0, 0.3f);
     }
 
     public void SortingLayerDown()
     {
-        transform.position -= new Vector3(0, 0, -0.3f);
+        transform.position += new Vector3(0, 0, 0.3f);
 
     }
 
