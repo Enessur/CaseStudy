@@ -1,5 +1,5 @@
 ﻿// Toony Colors Pro+Mobile 2
-// (c) 2014-2019 Jean Moreno
+// (c) 2014-2022 Jean Moreno
 
 Shader "Toony Colors Pro 2/Examples/Water/Water WindWaker"
 {
@@ -34,6 +34,11 @@ Shader "Toony Colors Pro 2/Examples/Water/Water WindWaker"
 		_FoamTex ("Foam (RGB)", 2D) = "white" {}
 		_FoamSmooth ("Foam Smoothness", Range(0,0.5)) = 0.02
 		_FoamSpeed ("Foam Speed", Vector) = (2,2,2,2)
+
+		[Header(Vertex Waves Animation)]
+		_WaveSpeed ("Speed", Float) = 2
+		_WaveHeight ("Height", Float) = 0.1
+		_WaveFrequency ("Frequency", Range(0,10)) = 1
 
 		[Header(UV Waves Animation)]
 		_UVWaveSpeed ("Speed", Float) = 1
@@ -75,6 +80,9 @@ Shader "Toony Colors Pro 2/Examples/Water/Water WindWaker"
 		sampler2D _FoamTex;
 		fixed4 _FoamColor;
 		half _FoamSmooth;
+		half _WaveHeight;
+		half _WaveFrequency;
+		half _WaveSpeed;
 		half _UVWaveAmplitude;
 		half _UVWaveFrequency;
 		half _UVWaveSpeed;
@@ -193,6 +201,22 @@ Shader "Toony Colors Pro 2/Examples/Water/Water WindWaker"
 			o.texcoord.xy = TRANSFORM_TEX(mainTexcoords.xy, _MainTex);
 			half2 x = ((v.vertex.xy+v.vertex.yz) * _UVWaveFrequency) + (TIME.xx * _UVWaveSpeed);
 			o.sinAnim = x;
+			//vertex waves
+			float3 _pos = worldPos.xyz * _WaveFrequency;
+			float _phase = TIME * _WaveSpeed;
+			half4 vsw_offsets = half4(1.0, 2.2, 0.6, 1.3);
+			half4 vsw_ph_offsets = half4(1.0, 1.3, 2.2, 0.4);
+			half4 waveXZ = sin((_pos.xxzz * vsw_offsets) + (_phase.xxxx * vsw_ph_offsets));
+			// float waveFactorX = (waveXZ.x + waveXZ.y) * _WaveHeight / 2;
+			// float waveFactorZ = (waveXZ.z + waveXZ.w) * _WaveHeight / 2;
+			float waveFactorX = dot(waveXZ.xy, 1) * _WaveHeight / 2;
+			float waveFactorZ = dot(waveXZ.zw, 1) * _WaveHeight / 2;
+		#define VSW_STRENGTH 1
+			v.vertex.y += (waveFactorX + waveFactorZ) * VSW_STRENGTH;
+			half4 waveXZn = cos((_pos.xxzz * vsw_offsets) + (_phase.xxxx * vsw_ph_offsets)) * (vsw_offsets / 2);
+			float xn = -_WaveHeight * (waveXZn.x + waveXZn.y);
+			float zn = -_WaveHeight * (waveXZn.z + waveXZn.w);
+			v.normal = normalize(float3(xn, 1, zn));
 			float4 pos = UnityObjectToClipPos(v.vertex);
 			o.sPos = ComputeScreenPos(pos);
 			COMPUTE_EYEDEPTH(o.sPos.z);
@@ -222,7 +246,6 @@ Shader "Toony Colors Pro 2/Examples/Water/Water WindWaker"
 				sceneZ = LinearEyeDepth(sceneZ);
 			float partZ = IN.sPos.z;
 			float depthDiff = abs(sceneZ - partZ);
-			depthDiff *= ndv * 2;
 			//Depth-based foam
 			half2 foamUV = IN.texcoord.xy;
 			foamUV.xy += TIME.xx*_FoamSpeed.xy*0.05;

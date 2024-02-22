@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 5a843c5760a1b994d91d18a9d6cde410
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _NoTileNoiseTex: {fileID: 2800000, guid: af5515bfe14f1af4a9b8b3bf306b9261, type: 3}
+  - _Ramp: {fileID: 2800000, guid: ccad9b0732473ee4e95de81e50e9050f, type: 3}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: USER,FSHADOWMASK,FTEXTURE_RAMP,FSPECULAR,FSPEC_LEGACY,FSPECULAR_TOON,FRIM_OUTLINE,FRIM_VERTEX,FBUMP,FBUMP_SCALE,FPARALLAX,FTEXTURED_THRESHOLD,FSKETCH_GRADIENT,FSKETCH_ANIM,FSKETCH_VERTEX,FNO_SKETCH_OFFSET,FOUTLINE_BLENDING,FLEGACY_OUTLINE,FOUTLINE_BEHIND_STENCIL,KSHADER_TARGET:3.0,ch8D4002B,cSM:30,cCF:TCP2_ShaderTemplate_Default
+  assetBundleName: 
+  assetBundleVariant: 
