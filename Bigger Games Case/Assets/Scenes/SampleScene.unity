@@ -3786,6 +3786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: debf1f5ec802cb3438d9f124efd2f0b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shaderScriptable: {fileID: 11400000, guid: 4d1de972114d5634d970425b7923a692, type: 2}
   piecePrefab: {fileID: 4138097461598832170, guid: 3b2df6b321e70284095f0468e3caaadb, type: 3}
   nodePrefab: {fileID: 1234629603591719828, guid: 92c32f50507dd764ba042ce5f81af171, type: 3}
   gridTable: {fileID: 1411193607}

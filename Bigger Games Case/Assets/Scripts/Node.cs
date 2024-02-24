@@ -7,6 +7,9 @@ public class Node : PuzzleItem
     [SerializeField] private Renderer renderer;
     public Color Color => _color;
     private Color _color;
+    
+    public Material Material => _material;
+    private Material _material;
     public Piece Piece => _piece;
     private Piece _piece;
     public bool HasPiece => _hasPiece;
@@ -62,6 +65,11 @@ public class Node : PuzzleItem
 
     }
 
+    public void SetMaterial(Material pieceMaterial)
+    {
+        _material = pieceMaterial;
+        renderer.material = _material;
+    }
 
     public void SetColor(Color pieceColor)
     {

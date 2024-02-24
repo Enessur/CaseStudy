@@ -200,6 +200,16 @@ public class Piece : PuzzleItem
             node.SetColor(newColor);
         }
     }
+    
+    public void SetNodesMaterial(Material newMaterial)
+    {
+        foreach (Node node in _nodes)
+        {
+            node.SetMaterial(newMaterial);
+        }
+    }
+    
+    
 
     public Vector2Int ReturnPieceSize()
     {

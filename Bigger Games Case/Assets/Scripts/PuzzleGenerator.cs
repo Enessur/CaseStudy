@@ -1,17 +1,21 @@
 using System;
 using System.Collections.Generic;
+using Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class PuzzleGenerator : MonoBehaviour, IResetable
 {
     public static PuzzleGenerator Instance;
+
+    [SerializeField] private ShaderScriptable shaderScriptable;
     [SerializeField] private Piece piecePrefab;
     [SerializeField] private Node nodePrefab;
     public GridTable GridTable => gridTable;
     [SerializeField] private GridTable gridTable;
     [SerializeField] private Vector2 noise = new Vector2(0.5f, 0.8f);
 
+    List<int> selectedMaterialIndices = new List<int>();
     public Vector2Int puzzleSize = new(4, 4);
     public static Action OnAllPiecesPlaced;
     public static Action OnNewPuzzleCreated;
@@ -70,7 +74,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
             SoundManager.Instance.PlaySound("Complete");
             OnAllPiecesPlaced?.Invoke();
         }
-
     }
 
   
@@ -95,7 +98,8 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
                     (j * _noiseScale) + Random.Range(-noise.x, noise.y));
 
                 Color pieceColor = _pieceColors[CalculateColorIndex(noiseValue)];
-                var node = Instantiate(nodePrefab, new Vector3(i, j, 0), Quaternion.identity);
+                Quaternion rotation = Quaternion.Euler(-90, 0, 0); 
+                var node = Instantiate(nodePrefab, new Vector3(i, j, 0), rotation);
                 node.Init();
                 node.SetColor(pieceColor);
                 _nodeGrid[i, j] = node;
@@ -230,7 +234,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         SingleGroupDFS(x, y + 1, piece);
         SingleGroupDFS(x, y - 1, piece);
 
-        ChangeGroupColor(piece);
+        //ChangeGroupColor(piece);
     }
 
     private void ChangeGroupColor(Piece piece)
@@ -247,7 +251,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         {
             Vector2Int pieceSize = p.ReturnPieceSize();
             p.ShiftNodesToOrigin();
-            if (placeX < puzzleSize.x -1)
+            if (placeX < puzzleSize.x - 1)
             {
                 Debug.Log(placeX);
                 placeX += pieceSize.x + offset;
@@ -255,18 +259,37 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
                 {
                     placeY = pieceSize.y;
                 }
-                p.transform.position = new Vector3(placeX-1, -placeY);
-
+                p.transform.position = new Vector3(placeX - 1, -placeY);
             }
             else
             {
                 placeY += pieceSize.y + offset;
                 placeX = 0;
-                p.transform.position = new Vector3(placeX-1, -placeY);
-
+                p.transform.position = new Vector3(placeX - 1, -placeY);
             }
+        
+            int randomMaterialIndex = GetRandomMaterialIndex();
+            p.SetNodesMaterial(shaderScriptable.Materials[randomMaterialIndex]);
             p.StartPosition();
         }
+    }
+
+    private int GetRandomMaterialIndex()
+    {
+        int maxIndex = shaderScriptable.Materials.Count;
+        int randomIndex = UnityEngine.Random.Range(0, maxIndex);
+
+        while (selectedMaterialIndices.Contains(randomIndex))
+        {
+            randomIndex = UnityEngine.Random.Range(0, maxIndex);
+        }
+        selectedMaterialIndices.Add(randomIndex);
+        if (selectedMaterialIndices.Count == maxIndex)
+        {
+            selectedMaterialIndices.Clear();
+        }
+
+        return randomIndex;
     }
 
     private Color[] GenerateRandomColors(int n)
