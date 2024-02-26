@@ -20,17 +20,17 @@ public class Piece : PuzzleItem
     private bool _isPlaced, _inMatrixNode, _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
-    public static Action<Piece> onPushStack;
-    public static Action<Piece> onPopStack;
+    public static Action<Piece,Vector3> onPiecePlaced;
+    public static Action<Piece> onPieceRemove;
 
     private void OnEnable()
     {
-        LevelManager.onLevelReload += ReloadPuzzle;
+        PieceUndo.onLevelReload += ReloadPuzzle;
     }
 
     private void OnDisable()
     {
-        LevelManager.onLevelReload -= ReloadPuzzle;
+        PieceUndo.onLevelReload -= ReloadPuzzle;
     }
 
     public void Init(Transform parent, Color groupColor)
@@ -58,6 +58,7 @@ public class Piece : PuzzleItem
     private void OnFingerDown(LeanFinger leanFinger)
     {
         SoundManager.Instance.PlaySound("Click");
+        onPiecePlaced?.Invoke(this,this.transform.position);
         HapticFeedBack();
         UnRegisterNodes();
         ChangeLayerOnFingerDown();
@@ -103,6 +104,7 @@ public class Piece : PuzzleItem
         if (TryGetPair(out var pair))
         {
             PlaceBack();
+            onPieceRemove?.Invoke(this);
             return;
         }
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
@@ -244,7 +246,6 @@ public class Piece : PuzzleItem
         int width = maxX - minX + 1;
         int height = maxY - minY + 1;
 
-        Debug.Log($"Piece Size width:{width}, height:{height}");
         return new Vector2Int(width, height);
     }
 
@@ -252,7 +253,6 @@ public class Piece : PuzzleItem
     public void Shift(Vector3 value)
     {
         SoundManager.Instance.PlaySound("Placed");
-        onPushStack?.Invoke(this);
         transform.position += value;
     }
 
@@ -303,5 +303,13 @@ public class Piece : PuzzleItem
         {
             node.transform.localPosition -= offset;
         }
+    }
+
+    public void Undo(Vector3 undoPosition)
+    {
+        Debug.Log("Brooo is that even workin ?!?!??!"+undoPosition);
+        transform.position = undoPosition;
+        UnRegisterNodes();
+        TryShifting();
     }
 }

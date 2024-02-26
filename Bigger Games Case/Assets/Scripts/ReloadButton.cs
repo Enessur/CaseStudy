@@ -9,6 +9,7 @@ public class ReloadButton : MonoBehaviour
     [SerializeField] protected LeanSelectableByFinger leanSelectableByFinger;
 
     public static Action onReloadClicked;
+    public static Action onReloadHold;
     private readonly WaitForSeconds _endOfSecond = new WaitForSeconds(1f);
     private bool _isFingerDown, _isHoldPressed;
     private Coroutine _holdCoroutine;
@@ -57,6 +58,7 @@ public class ReloadButton : MonoBehaviour
     {
         _isHoldPressed = true;
         Debug.Log("Reload button held for 1 second");
+        onReloadHold?.Invoke();
         _isFingerDown = true;
     }
 
@@ -66,8 +68,6 @@ public class ReloadButton : MonoBehaviour
         {
             return;
         }
-
-        Debug.Log("Reload button clicked");
         onReloadClicked?.Invoke();
     }
 }

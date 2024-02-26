@@ -89,7 +89,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         _pieceColors = GenerateRandomColors((puzzleSize.x + puzzleSize.y) / 2);
 
         _noiseScale = Random.Range(noise.x, noise.y);
-        Debug.Log(_noiseScale);
         for (int i = 0; i < puzzleSize.x; i++)
         {
             for (int j = 0; j < puzzleSize.y; j++)
@@ -253,7 +252,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
             p.ShiftNodesToOrigin();
             if (placeX < puzzleSize.x - 1)
             {
-                Debug.Log(placeX);
                 placeX += pieceSize.x + offset;
                 if (placeY < pieceSize.y)
                 {
