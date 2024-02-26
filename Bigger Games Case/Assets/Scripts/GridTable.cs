@@ -14,8 +14,10 @@ public class GridTable : MonoBehaviour, IResetable
     private int _targetCount;
     private Vector2Int _size;
     private float _startDelay, _delayTime;
+    private GameObject _gridHolder;
     public static Action onGridCreate;
     public static Action clearGridHighlight;
+    
     
     public void OnEnable()
     {
@@ -34,13 +36,13 @@ public class GridTable : MonoBehaviour, IResetable
 
     public void GenerateGrid(Vector2Int size)
     {
-        GameObject gridHolder = new GameObject("GridHolder");
+         _gridHolder = new GameObject("GridHolder");
         _size = size;
         for (int i = 0; i < size.x; i++)
         {
             for (int j = 0; j < size.y; j++)
             {
-                var mn = Instantiate(matrixNodePrefab, gridHolder.transform, true);
+                var mn = Instantiate(matrixNodePrefab, _gridHolder.transform, true);
                 mn.Init(new MatrixNodeData(new Vector2Int(i, j), false, null));
                 _matrixNodeDictionary.Add(new Vector2Int(i,j),mn);
             }
@@ -56,13 +58,12 @@ public class GridTable : MonoBehaviour, IResetable
             Destroy(matrixNode.gameObject);
         }
         _matrixNodeDictionary.Clear();
-        GameObject gridHolder = GameObject.Find("GridHolder");
-        if (gridHolder != null)
+    
+        if (_gridHolder != null)
         {
-            Destroy(gridHolder);
+            Destroy(_gridHolder);
         }
     }
-    
 
 
     public (bool, MatrixNode) GetClosestEmptyMatrixNode(Vector3 position)

@@ -242,33 +242,38 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         piece.SetNodesColor(newColor);
     }
 
-    float placeX, placeY, offset = 0.1f;
+    float placeX, placeY, offset = 0.3f;
 
     private void Shuffle()
     {
         foreach (Piece p in _pieces)
         {
+            float rn = Random.Range(-0.2f, 0.2f);
             Vector2Int pieceSize = p.ReturnPieceSize();
             p.ShiftNodesToOrigin();
             if (placeX < puzzleSize.x - 1)
             {
                 placeX += pieceSize.x + offset;
+                Debug.Log("Place x pos : "+ placeX);
                 if (placeY < pieceSize.y)
                 {
                     placeY = pieceSize.y;
                 }
-                p.transform.position = new Vector3(placeX - 1, -placeY);
+                p.transform.position = new Vector3(placeX - 1, -placeY,rn);
             }
             else
             {
-                placeY += pieceSize.y + offset;
+                Debug.Log("Place y pos : "+ placeY);
+
+                placeY += pieceSize.y + offset*2;
                 placeX = 0;
-                p.transform.position = new Vector3(placeX - 1, -placeY);
+                p.transform.position = new Vector3(placeX - 1, -placeY,rn);
             }
         
             int randomMaterialIndex = GetRandomMaterialIndex();
             p.SetNodesMaterial(shaderScriptable.Materials[randomMaterialIndex]);
             p.StartPosition();
+            p.SpawnAnimation();
         }
     }
 

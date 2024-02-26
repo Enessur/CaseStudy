@@ -305,9 +305,16 @@ public class Piece : PuzzleItem
         }
     }
 
+    public void SpawnAnimation()
+    {
+        foreach (var node in _nodes)
+        {
+            node.StartAnimation();
+        } 
+    }
+
     public void Undo(Vector3 undoPosition)
     {
-        Debug.Log("Brooo is that even workin ?!?!??!"+undoPosition);
         transform.position = undoPosition;
         UnRegisterNodes();
         TryShifting();

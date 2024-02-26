@@ -14,14 +14,13 @@ public class PieceUndo : Singleton<PieceUndo>
     private UndoData _item;
     public static Action onLevelReload;
 
-    //  public static Action<UndoData> onUndo;
-
     private void OnEnable()
     {
         ReloadButton.onReloadClicked += UndoMove;
         ReloadButton.onReloadHold += OnReloadHold;
         Piece.onPiecePlaced += AddMove;
         Piece.onPieceRemove += RemovePiece;
+        LevelManager.onLevelReset += ClearList;
     }
 
     private void OnDisable()
@@ -30,6 +29,8 @@ public class PieceUndo : Singleton<PieceUndo>
         ReloadButton.onReloadHold -= OnReloadHold;
         Piece.onPiecePlaced -= AddMove;
         Piece.onPieceRemove -= RemovePiece;
+        LevelManager.onLevelReset -= ClearList;
+
     }
 
     public void AddMove(Piece piece, Vector3 position)
