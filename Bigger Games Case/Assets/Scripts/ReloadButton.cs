@@ -57,7 +57,6 @@ public class ReloadButton : MonoBehaviour
     public void OnReloadHold()
     {
         _isHoldPressed = true;
-        Debug.Log("Reload button held for 1 second");
         onReloadHold?.Invoke();
         _isFingerDown = true;
     }

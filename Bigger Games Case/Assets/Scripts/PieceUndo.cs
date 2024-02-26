@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class PieceUndo : Singleton<PieceUndo>
 {
+    [SerializeField] private ReloadButton reloadButton;
+    
     private List<UndoData> _pieceData = new();
     private Piece piece;
     private UndoData _item;
@@ -32,8 +34,26 @@ public class PieceUndo : Singleton<PieceUndo>
 
     public void AddMove(Piece piece, Vector3 position)
     {
+        if (IsMoveAlreadyAdded(piece, position))
+        {
+            Debug.Log($"Move for Piece: {piece} at Position: {position} already exists.");
+            return;
+        }
+
         _pieceData.Add(new UndoData(piece, position));
-        Debug.Log($"Piece :{piece} Position :{position}");
+        Debug.Log($"Piece: {piece} Position: {position} added to the list.");
+    }
+
+    private bool IsMoveAlreadyAdded(Piece piece, Vector3 position)
+    {
+        foreach (UndoData data in _pieceData)
+        {
+            if (data.piece == piece && data.position == position)
+            {
+                return true;  
+            }
+        }
+        return false;  
     }
 
     public void UndoMove()
@@ -46,7 +66,6 @@ public class PieceUndo : Singleton<PieceUndo>
         var data = _pieceData.Last();
         _pieceData.Remove(data);
         UndoPiece(data);
-        //  onUndo?.Invoke(data);
     }
 
     public void UndoPiece(UndoData undoData)
