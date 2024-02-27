@@ -11,20 +11,23 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
     [SerializeField] private ShaderScriptable shaderScriptable;
     [SerializeField] private Piece piecePrefab;
     [SerializeField] private Node nodePrefab;
+    [SerializeField] private Vector2 noise = new Vector2(0.5f, 0.8f);
     public GridTable GridTable => gridTable;
     [SerializeField] private GridTable gridTable;
-    [SerializeField] private Vector2 noise = new Vector2(0.5f, 0.8f);
 
-    List<int> selectedMaterialIndices = new List<int>();
+    private List<int> _selectedMaterialIndices = new List<int>();
     public Vector2Int puzzleSize = new(4, 4);
     public static Action OnAllPiecesPlaced;
     public static Action OnNewPuzzleCreated;
+    private List<PieceSize> _pieceSizeList = new();
+    private PieceSize _pieceItem;
     private List<Piece> _pieces = new();
     private Color[] _pieceColors;
     private float _noiseScale;
     private Node[,] _nodeGrid = new Node[24, 24];
     private int _totalPieceCount;
     private int _placedPieceCount;
+    private bool _first;
 
     private void Awake()
     {
@@ -33,7 +36,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
 
     private void Start()
     {
-        
         CreatePuzzle();
     }
 
@@ -63,7 +65,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         if (state)
         {
             _placedPieceCount++;
-            
         }
         else
         {
@@ -76,8 +77,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
             OnAllPiecesPlaced?.Invoke();
         }
     }
-
-  
 
 
     private void GenerateGridTable()
@@ -98,7 +97,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
                     (j * _noiseScale) + Random.Range(-noise.x, noise.y));
 
                 Color pieceColor = _pieceColors[CalculateColorIndex(noiseValue)];
-                Quaternion rotation = Quaternion.Euler(-90, 0, 0); 
+                Quaternion rotation = Quaternion.Euler(-90, 0, 0);
                 var node = Instantiate(nodePrefab, new Vector3(i, j, 0), rotation);
                 node.Init();
                 node.SetColor(pieceColor);
@@ -233,65 +232,77 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         SingleGroupDFS(x - 1, y, piece);
         SingleGroupDFS(x, y + 1, piece);
         SingleGroupDFS(x, y - 1, piece);
-
-        //ChangeGroupColor(piece);
-    }
-
-    private void ChangeGroupColor(Piece piece)
-    {
-        Color newColor = new Color(Random.value, Random.value, Random.value);
-        piece.SetNodesColor(newColor);
     }
 
     float placeX, placeY, offset = 0.3f;
 
     private void Shuffle()
     {
+        float maxPieceHeight = 0f; 
+    
         foreach (Piece p in _pieces)
         {
             float rn = Random.Range(-0.2f, 0.2f);
             Vector2Int pieceSize = p.ReturnPieceSize();
-            Debug.Log("Piece Size : "+ pieceSize);
-            p.ShiftNodesToOrigin();
-            if (placeX < puzzleSize.x)
+            maxPieceHeight = Mathf.Max(maxPieceHeight, pieceSize.y);  
+
+            if (_pieces.IndexOf(p) > 0)
             {
-              
-                Debug.Log("Place x pos : "+ placeX+ "Piece :"+ p);
-                if (placeY < pieceSize.y)
+                float startX = _pieces[_pieces.IndexOf(p) - 1].transform.position.x + _pieces[_pieces.IndexOf(p) - 1].ReturnPieceSize().x / 2f + pieceSize.x / 2f + 0.2f;
+                float startY = _pieces[_pieces.IndexOf(p) - 1].transform.position.y;
+
+                if (startX + pieceSize.x / 2f > puzzleSize.x + 2f)
                 {
-                    placeY = pieceSize.y;
+                    startX = -1f;
+                    startY -= maxPieceHeight / 2f + pieceSize.y / 2f + 0.2f;
                 }
-                p.transform.position = new Vector3(placeX - 1, -placeY,rn);
-                placeX += pieceSize.x + offset;
+
+                p.transform.position = new Vector3(startX, startY, rn);
             }
-            else
+            else  
             {
-                Debug.Log("Place y pos : "+ placeY+ "Piece :"+ p);
-                placeX = 0;
-                p.transform.position = new Vector3(placeX - 1, -placeY,rn);
-                placeY += pieceSize.y + offset;
+                p.transform.position = new Vector3(-1f, -2-pieceSize.y / 2f, rn);
             }
         
-            int randomMaterialIndex = GetRandomMaterialIndex();
-            p.SetNodesMaterial(shaderScriptable.Materials[randomMaterialIndex]);
-            p.StartPosition();
+            int randomMaterialIndex = GetRandomMaterialIndex();  
+            p.ShiftNodesToOrigin();  
+            p.SetNodesMaterial(shaderScriptable.Materials[randomMaterialIndex]);  
+            p.StartPosition();  
             p.SpawnAnimation();
         }
     }
+
+
+    // private Piece FindBiggestPiece(PieceSize pieceSize)
+    // {
+    //     for (int i = 0; i < _pieceSizeList.Count; i++)
+    //     {
+    //         piecePrefab = _pieceSizeList[i].piece;
+    //         var currentPieceSize = _pieceSizeList[i].pieceSizeX + _pieceSizeList[i].pieceSizeY;
+    //         int biggest = currentPieceSize;
+    //         if (currentPieceSize>biggest)
+    //         {
+    //             biggest = currentPieceSize;
+    //         }
+    //     }
+    //
+    //     return piecePrefab;
+    // }
 
     private int GetRandomMaterialIndex()
     {
         int maxIndex = shaderScriptable.Materials.Count;
         int randomIndex = UnityEngine.Random.Range(0, maxIndex);
 
-        while (selectedMaterialIndices.Contains(randomIndex))
+        while (_selectedMaterialIndices.Contains(randomIndex))
         {
             randomIndex = UnityEngine.Random.Range(0, maxIndex);
         }
-        selectedMaterialIndices.Add(randomIndex);
-        if (selectedMaterialIndices.Count == maxIndex)
+
+        _selectedMaterialIndices.Add(randomIndex);
+        if (_selectedMaterialIndices.Count == maxIndex)
         {
-            selectedMaterialIndices.Clear();
+            _selectedMaterialIndices.Clear();
         }
 
         return randomIndex;
@@ -313,7 +324,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         return Mathf.FloorToInt(noiseValue * ((puzzleSize.x + puzzleSize.y) / 2));
     }
 
-    //todo: custom level size with sliders, use cinemachine to adjust cam
     public void CreateLevel(Vector2Int size)
     {
         puzzleSize = size;
@@ -331,6 +341,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         {
             Destroy(piece.gameObject);
         }
+
         gridTable.RemoveGrids();
         placeX = 0;
         placeY = 0;
