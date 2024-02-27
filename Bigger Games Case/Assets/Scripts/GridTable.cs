@@ -17,6 +17,7 @@ public class GridTable : MonoBehaviour, IResetable
     private GameObject _gridHolder;
     public static Action onGridCreate;
     public static Action clearGridHighlight;
+    public static Action<bool> onAnimationActive;
     
     
     public void OnEnable()
@@ -171,6 +172,7 @@ public class GridTable : MonoBehaviour, IResetable
     public void ResetAnimation()
     { 
         OnAnimation = true;
+        onAnimationActive?.Invoke(true);
         leanTouch.SetActive(false);
         _startDelay = 0;
         for (int i = 0; i < _size.x; i++)
@@ -192,6 +194,7 @@ public class GridTable : MonoBehaviour, IResetable
 
     public void OnNewPuzzleCreated()
     {
+        onAnimationActive?.Invoke(false);
         OnAnimation = false;
         leanTouch.SetActive(true);
     }

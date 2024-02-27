@@ -9,11 +9,13 @@ public class Popup : MonoBehaviour
     [SerializeField] private Button settingsButton;
     [SerializeField] private float duration = 0.5f;
     [SerializeField] private Ease ease;
+    private bool _isAnimationActive;
     private Vector3 _startScale;
 
     private void OnEnable()
     {
         GridCanvasController.CloseMenuOnSelection += Close;
+        GridTable.onAnimationActive += OnAnimationActive;
         closeButton.onClick.AddListener(OnCloseClick);
         settingsButton.onClick.AddListener(Open);
     }
@@ -39,6 +41,10 @@ public class Popup : MonoBehaviour
 
     public void Open()
     {
+        if (_isAnimationActive)
+        {
+            return;
+        }
         content.SetActive(true);
         content.transform.DOScale(_startScale, duration).SetEase(ease);
     }
@@ -47,7 +53,11 @@ public class Popup : MonoBehaviour
     {
         content.transform.DOScale(0, duration).SetEase(ease).OnComplete(() => { content.SetActive(false); });
     }
-    
+
+    public void OnAnimationActive(bool isAnimationActive)
+    {
+        _isAnimationActive = isAnimationActive;
+    }
     
     private void OnCloseClick()
     {

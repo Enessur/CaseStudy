@@ -37,12 +37,12 @@ public class PieceUndo : Singleton<PieceUndo>
     {
         if (IsMoveAlreadyAdded(piece, position))
         {
-            Debug.Log($"Move for Piece: {piece} at Position: {position} already exists.");
+           // Debug.Log($"Move for Piece: {piece} at Position: {position} already exists.");
             return;
         }
 
         _pieceData.Add(new UndoData(piece, position));
-        Debug.Log($"Piece: {piece} Position: {position} added to the list.");
+      //  Debug.Log($"Piece: {piece} Position: {position} added to the list.");
     }
 
     private bool IsMoveAlreadyAdded(Piece piece, Vector3 position)

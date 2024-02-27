@@ -14,11 +14,11 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
     [SerializeField] private Vector2 noise = new Vector2(0.5f, 0.8f);
     public GridTable GridTable => gridTable;
     [SerializeField] private GridTable gridTable;
+    public Vector2Int puzzleSize = new(4, 4);
+    public static Action OnNewPuzzleCreated;
+    public static Action OnAllPiecesPlaced;
 
     private List<int> _selectedMaterialIndices = new List<int>();
-    public Vector2Int puzzleSize = new(4, 4);
-    public static Action OnAllPiecesPlaced;
-    public static Action OnNewPuzzleCreated;
     private List<PieceSize> _pieceSizeList = new();
     private PieceSize _pieceItem;
     private List<Piece> _pieces = new();
@@ -28,7 +28,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
     private int _totalPieceCount;
     private int _placedPieceCount;
     private bool _first;
-
+    private float _maxHeightY = -10.5f;
     private void Awake()
     {
         Instance = this;
@@ -244,7 +244,11 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         {
             float rn = Random.Range(-0.2f, 0.2f);
             Vector2Int pieceSize = p.ReturnPieceSize();
-            maxPieceHeight = Mathf.Max(maxPieceHeight, pieceSize.y);  
+            maxPieceHeight = Mathf.Max(maxPieceHeight, pieceSize.y);
+            if (maxPieceHeight < _maxHeightY)
+            {
+                maxPieceHeight = _maxHeightY;
+            }
 
             if (_pieces.IndexOf(p) > 0)
             {
@@ -254,14 +258,14 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
                 if (startX + pieceSize.x / 2f > puzzleSize.x + 2f)
                 {
                     startX = -1f;
-                    startY -= maxPieceHeight / 2f + pieceSize.y / 2f + 0.2f;
+                    startY -= maxPieceHeight / 2f + pieceSize.y / 2f + 0.3f;
                 }
 
                 p.transform.position = new Vector3(startX, startY, rn);
             }
             else  
             {
-                p.transform.position = new Vector3(-1f, -2-pieceSize.y / 2f, rn);
+                p.transform.position = new Vector3(-2f, -2-pieceSize.y / 2f, rn);
             }
         
             int randomMaterialIndex = GetRandomMaterialIndex();  
@@ -271,23 +275,6 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
             p.SpawnAnimation();
         }
     }
-
-
-    // private Piece FindBiggestPiece(PieceSize pieceSize)
-    // {
-    //     for (int i = 0; i < _pieceSizeList.Count; i++)
-    //     {
-    //         piecePrefab = _pieceSizeList[i].piece;
-    //         var currentPieceSize = _pieceSizeList[i].pieceSizeX + _pieceSizeList[i].pieceSizeY;
-    //         int biggest = currentPieceSize;
-    //         if (currentPieceSize>biggest)
-    //         {
-    //             biggest = currentPieceSize;
-    //         }
-    //     }
-    //
-    //     return piecePrefab;
-    // }
 
     private int GetRandomMaterialIndex()
     {

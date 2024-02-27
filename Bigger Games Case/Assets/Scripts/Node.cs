@@ -19,7 +19,6 @@ public class Node : PuzzleItem
     public static Action onReload;
     [SerializeField] private Vector2Int _coordinate;
     [SerializeField] private MatrixNode _matrixNode;
-    private Vector3 _initialScale;
     private bool _hasMatrixNode;
     private float _animationDelay;
 
@@ -112,10 +111,5 @@ public class Node : PuzzleItem
                 () => transform.DOScale(Vector3.zero, LevelEndingAnimator.ScaleDuration).SetEase(Ease.InOutBack));
     }
 
-    public void StartAnimation()
-    {
-        _initialScale = transform.localScale;
-        transform.localScale = Vector3.zero;  
-        transform.DOScale(_initialScale, 1f).SetEase(Ease.OutBounce);  
-    }
+    
 }

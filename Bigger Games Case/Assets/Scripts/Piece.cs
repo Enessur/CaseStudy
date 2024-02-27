@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Lean.Touch;
 using UnityEngine;
 using Color = UnityEngine.Color;
@@ -20,8 +21,9 @@ public class Piece : PuzzleItem
     private bool _isPlaced, _inMatrixNode, _isFingerDown;
     private const float SnapDistance = 1f;
     public static Action<bool, Piece> onPieceStateChanged;
-    public static Action<Piece,Vector3> onPiecePlaced;
+    public static Action<Piece, Vector3> onPiecePlaced;
     public static Action<Piece> onPieceRemove;
+    private Vector3 _initialScale;
 
     private void OnEnable()
     {
@@ -54,11 +56,11 @@ public class Piece : PuzzleItem
         _isFingerDown = false;
         StopCoroutine(HoldCoroutine());
     }
-    
+
     private void OnFingerDown(LeanFinger leanFinger)
     {
         SoundManager.Instance.PlaySound("Click");
-        onPiecePlaced?.Invoke(this,this.transform.position);
+        onPiecePlaced?.Invoke(this, this.transform.position);
         HapticFeedBack();
         UnRegisterNodes();
         ChangeLayerOnFingerDown();
@@ -74,8 +76,10 @@ public class Piece : PuzzleItem
             {
                 node.UnRegisterMatrixNode();
             }
+
             onPieceStateChanged?.Invoke(false, this);
         }
+
         _isPlaced = false;
     }
 
@@ -95,6 +99,7 @@ public class Piece : PuzzleItem
         {
             return;
         }
+
         table.TryHighlight(_nodes, _firstNode, pair.Item2);
     }
 
@@ -107,6 +112,7 @@ public class Piece : PuzzleItem
             onPieceRemove?.Invoke(this);
             return;
         }
+
         var t = table.TryAssignNodes(_nodes, _firstNode, pair.Item2);
         if (!t.Item1)
         {
@@ -126,7 +132,7 @@ public class Piece : PuzzleItem
     private void PlaceBack()
     {
         SoundManager.Instance.PlaySound("NotPlaced");
-        
+
         transform.position = lastDragPosition;
     }
 
@@ -149,6 +155,7 @@ public class Piece : PuzzleItem
 
         return false;
     }
+
     private void HapticFeedBack()
     {
         if (!Settings.Instance.vibrationToggle.isOn)
@@ -165,6 +172,7 @@ public class Piece : PuzzleItem
         {
             return;
         }
+
         transform.position = lastDragPosition;
         UnRegisterNodes();
     }
@@ -195,14 +203,7 @@ public class Piece : PuzzleItem
         }
     }
 
-    public void SetNodesColor(Color newColor)
-    {
-        foreach (Node node in _nodes)
-        {
-            node.SetColor(newColor);
-        }
-    }
-    
+
     public void SetNodesMaterial(Material newMaterial)
     {
         foreach (Node node in _nodes)
@@ -210,8 +211,7 @@ public class Piece : PuzzleItem
             node.SetMaterial(newMaterial);
         }
     }
-    
-    
+
 
     public Vector2Int ReturnPieceSize()
     {
@@ -307,11 +307,11 @@ public class Piece : PuzzleItem
 
     public void SpawnAnimation()
     {
-        foreach (var node in _nodes)
-        {
-            node.StartAnimation();
-        } 
+        _initialScale = transform.localScale;
+        transform.localScale = Vector3.zero;
+        transform.DOScale(_initialScale, 1f).SetEase(Ease.OutBounce);
     }
+
 
     public void Undo(Vector3 undoPosition)
     {
