@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,70 +10,44 @@ public struct GridCanvasLevelButtonPair
     public Vector2Int levelSize;
 }
 
-[Serializable]
-public struct GridCanvasLevelSliderPair
-{
-   
-    public SliderController sliderXY;
-}
-
 public class GridCanvasController : MonoBehaviour
 {
     [SerializeField] private GridCanvasLevelButtonPair[] gridCanvasLevelButtonPairs;
-    [SerializeField] private GridCanvasLevelSliderPair gridCanvasLevelSliderPair;
     [SerializeField] private Vector2Int currentValue;
     [SerializeField] private SmoothCam smoothCam;
     
     public static Action CloseMenuOnSelection;
-    private void OnEnable()
+
+
+    private void Start()
     {
         foreach (var p in gridCanvasLevelButtonPairs)
         {
-            void ButtonClicked() => OnEasyLevelCreate(p.levelSize);
+            void ButtonClicked() => OnNewLevelCreate(p.levelSize);
             p.levelButton.onClick.AddListener(ButtonClicked);
         }
-        gridCanvasLevelSliderPair.sliderXY.onSliderValueChanged += OnSliderValueChanged;
-         }
-
-     
-
-    private void OnSliderValueChanged(int value)
-    {
-        currentValue = new Vector2Int(value, value);
-        OnCustomLevelCreate(currentValue);
     }
 
-    private void OnDisable()
+  
+    
+    private void OnDestroy()
     {
-        gridCanvasLevelSliderPair.sliderXY.onSliderValueChanged -= OnSliderValueChanged;
+        foreach (var p in gridCanvasLevelButtonPairs)
+        {
+            void ButtonClicked() => OnNewLevelCreate(p.levelSize);
+            p.levelButton.onClick.RemoveListener(ButtonClicked);
+           
+        }
     }
+    
 
-
-    public void OnCustomLevelCreate(Vector2Int size)
+    public void OnNewLevelCreate(Vector2Int size)
     {
         SoundManager.Instance.PlaySound("SelectLevel");
         PuzzleGenerator.Instance.CreateLevel(size);
         smoothCam.OnGridSizeChange(size);
-    }
-
-    public void OnEasyLevelCreate(Vector2Int size)
-    {
-        PuzzleGenerator.Instance.CreateLevel(size);
-        smoothCam.OnGridSizeChange(size);
         CloseMenuOnSelection?.Invoke();
-    }
 
-    public void Subscription()
-    {
-        GridTable.onGridCreate += AdjustCanvas;
     }
-
-    public void Unsubscription()
-    {
-        GridTable.onGridCreate -= AdjustCanvas;
-    }
-
-    private void AdjustCanvas()
-    {
-    }
+    
 }

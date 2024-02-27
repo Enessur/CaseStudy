@@ -33,12 +33,13 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
 
     private void Start()
     {
-        GenerateGridTable();
+        
         CreatePuzzle();
     }
 
     private void CreatePuzzle()
     {
+        GenerateGridTable();
         OnNewPuzzleCreated?.Invoke();
         GeneratePuzzle();
         _pieces.RemoveAll(x => x == null);
@@ -250,24 +251,25 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         {
             float rn = Random.Range(-0.2f, 0.2f);
             Vector2Int pieceSize = p.ReturnPieceSize();
+            Debug.Log("Piece Size : "+ pieceSize);
             p.ShiftNodesToOrigin();
-            if (placeX < puzzleSize.x - 1)
+            if (placeX < puzzleSize.x)
             {
-                placeX += pieceSize.x + offset;
-                Debug.Log("Place x pos : "+ placeX);
+              
+                Debug.Log("Place x pos : "+ placeX+ "Piece :"+ p);
                 if (placeY < pieceSize.y)
                 {
                     placeY = pieceSize.y;
                 }
                 p.transform.position = new Vector3(placeX - 1, -placeY,rn);
+                placeX += pieceSize.x + offset;
             }
             else
             {
-                Debug.Log("Place y pos : "+ placeY);
-
-                placeY += pieceSize.y + offset*2;
+                Debug.Log("Place y pos : "+ placeY+ "Piece :"+ p);
                 placeX = 0;
                 p.transform.position = new Vector3(placeX - 1, -placeY,rn);
+                placeY += pieceSize.y + offset;
             }
         
             int randomMaterialIndex = GetRandomMaterialIndex();
@@ -314,9 +316,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
     //todo: custom level size with sliders, use cinemachine to adjust cam
     public void CreateLevel(Vector2Int size)
     {
-        gridTable.RemoveGrids();
         puzzleSize = size;
-        GenerateGridTable();
         ResetPuzzle();
     }
 
@@ -331,7 +331,7 @@ public class PuzzleGenerator : MonoBehaviour, IResetable
         {
             Destroy(piece.gameObject);
         }
-
+        gridTable.RemoveGrids();
         placeX = 0;
         placeY = 0;
         _totalPieceCount = 0;

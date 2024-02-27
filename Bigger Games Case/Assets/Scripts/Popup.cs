@@ -6,6 +6,7 @@ public class Popup : MonoBehaviour
 {
     [SerializeField] private GameObject content;
     [SerializeField] private Button closeButton;
+    [SerializeField] private Button settingsButton;
     [SerializeField] private float duration = 0.5f;
     [SerializeField] private Ease ease;
     private Vector3 _startScale;
@@ -14,12 +15,14 @@ public class Popup : MonoBehaviour
     {
         GridCanvasController.CloseMenuOnSelection += Close;
         closeButton.onClick.AddListener(OnCloseClick);
+        settingsButton.onClick.AddListener(Open);
     }
 
     private void OnDisable()
     {
         GridCanvasController.CloseMenuOnSelection -= Close;
         closeButton.onClick.RemoveListener(OnCloseClick);
+        settingsButton.onClick.RemoveListener(Open);
     }
 
     private void Awake()
